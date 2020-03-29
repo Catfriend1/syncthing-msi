@@ -10,9 +10,32 @@ SET DO_CLEANUP=1
 SET PRODUCT_NAME=Syncthing
 REM 
 REM Consts: Prerequisites.
+SET GNU_SED_DEPENDENCIES_FILENAME=sed-4.2.1-dep.zip
+SET GNU_SED_BINARIES_FILENAME=sed-4.2.1-bin.zip
 SET NSSM_FILENAME=nssm-2.24-101-g897c7ad.zip
 REM 
 REM Download prerequisites.
+REM 	GNU SED
+REM 		Binaries
+echo [INFO] Downloading GNU SED Binaries ...
+IF NOT EXIST "%SCRIPT_PATH%%GNU_SED_BINARIES_FILENAME%" call :psDownloadFile "http://sourceforge.net/projects/gnuwin32/files//sed/4.2.1/%GNU_SED_BINARIES_FILENAME%/download" "%SCRIPT_PATH%%GNU_SED_BINARIES_FILENAME%"
+call :psExpandArchive "%SCRIPT_PATH%%GNU_SED_BINARIES_FILENAME%" "%SCRIPT_PATH%sed"
+copy /y "%SCRIPT_PATH%sed\bin\sed.exe" "%SCRIPT_PATH%\Syncthing\sed.exe"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\sed.exe" echo [ERROR] File not found: sed.exe" & pause & goto :eof
+REM 
+REM 		Dependencies
+echo [INFO] Downloading GNU SED Dependencies ...
+IF NOT EXIST "%SCRIPT_PATH%%GNU_SED_DEPENDENCIES_FILENAME%" call :psDownloadFile "http://sourceforge.net/projects/gnuwin32/files//sed/4.2.1/%GNU_SED_DEPENDENCIES_FILENAME%/download" "%SCRIPT_PATH%%GNU_SED_DEPENDENCIES_FILENAME%"
+call :psExpandArchive "%SCRIPT_PATH%%GNU_SED_DEPENDENCIES_FILENAME%" "%SCRIPT_PATH%sed"
+copy /y "%SCRIPT_PATH%sed\bin\libiconv2.dll" "%SCRIPT_PATH%\Syncthing\libiconv2.dll"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\libiconv2.dll" echo [ERROR] File not found: libiconv2.dll" & pause & goto :eof
+copy /y "%SCRIPT_PATH%sed\bin\libintl3.dll" "%SCRIPT_PATH%\Syncthing\libintl3.dll"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\libintl3.dll" echo [ERROR] File not found: libintl3.dll" & pause & goto :eof
+copy /y "%SCRIPT_PATH%sed\bin\regex2.dll" "%SCRIPT_PATH%\Syncthing\regex2.dll"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\regex2.dll" echo [ERROR] File not found: regex2.dll" & pause & goto :eof
+REM 
+REM 	NSSM
+echo [INFO] Downloading NSSM ...
 IF NOT EXIST "%SCRIPT_PATH%%NSSM_FILENAME%" call :psDownloadFile "https://nssm.cc/ci/%NSSM_FILENAME%" "%SCRIPT_PATH%%NSSM_FILENAME%"
 call :psExpandArchive "%SCRIPT_PATH%%NSSM_FILENAME%" "%SCRIPT_PATH%"
 copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win32\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x86.exe"
