@@ -5,6 +5,8 @@ sed-*.zip
 # Prerequisite extract related
 nssm-*/
 sed/
+Syncthing/nssm_x64.exe
+Syncthing/nssm_x86.exe
 
 # WIX build process related
 *.msi
