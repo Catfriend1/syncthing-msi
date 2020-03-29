@@ -13,6 +13,7 @@ REM Consts: Prerequisites.
 SET GNU_SED_DEPENDENCIES_FILENAME=sed-4.2.1-dep.zip
 SET GNU_SED_BINARIES_FILENAME=sed-4.2.1-bin.zip
 SET NSSM_FILENAME=nssm-2.24-101-g897c7ad.zip
+SET SIGCHECK_FILENAME=sigcheck64.exe
 SET SYNCTHING_VERSION=v1.4.0
 SET SYNCTHING_FILENAME=syncthing-windows-amd64-%SYNCTHING_VERSION%.zip
 SET WIX_TOOLSET_FILENAME=wix311-binaries.zip
@@ -46,6 +47,11 @@ IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x86.exe" echo [ERROR] File not found:
 copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win64\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x64.exe"
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x64.exe" echo [ERROR] File not found: nssm_x64.exe & pause & goto :eof
 REM 
+REM   Sigcheck
+echo [INFO] Downloading Sigcheck ...
+IF NOT EXIST "%SCRIPT_PATH%%SIGCHECK_FILENAME%" call :psDownloadFile "http://live.sysinternals.com/%SIGCHECK_FILENAME%" "%SCRIPT_PATH%%SIGCHECK_FILENAME%"
+IF NOT EXIST "%SCRIPT_PATH%%SIGCHECK_FILENAME%" echo [ERROR] File not found: %SIGCHECK_FILENAME% & pause & goto :eof
+REM 
 REM 	Syncthing
 echo [INFO] Downloading Syncthing ...
 IF NOT EXIST "%SCRIPT_PATH%%SYNCTHING_FILENAME%" call :psDownloadFile "https://github.com/syncthing/syncthing/releases/download/%SYNCTHING_VERSION%/%SYNCTHING_FILENAME%" "%SCRIPT_PATH%%SYNCTHING_FILENAME%"
@@ -62,7 +68,7 @@ copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\metadata\release.sig" "%SCRIPT_
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe.sig" echo [ERROR] File not found: syncthing.exe.sig & pause & goto :eof
 REM 
 REM   WiX Toolset
-echo [INFO] WiX Toolset ...
+echo [INFO] Downloading WiX Toolset ...
 IF NOT EXIST "%SCRIPT_PATH%%WIX_TOOLSET_FILENAME%" call :psDownloadFile "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/%WIX_TOOLSET_FILENAME%" "%SCRIPT_PATH%%WIX_TOOLSET_FILENAME%"
 call :psExpandArchive "%SCRIPT_PATH%%WIX_TOOLSET_FILENAME%" "%SCRIPT_PATH%wix"
 SET WIX_CANDLE_BIN="%SCRIPT_PATH%wix\candle.exe"
@@ -82,11 +88,12 @@ SET WIX_INPUT_SCRIPT_TEMPLATE="%SCRIPT_PATH%%PRODUCT_NAME%.wxs.template"
 SET WIX_INPUT_SCRIPT="%SCRIPT_PATH%%PRODUCT_NAME%.wxs"
 REM 
 REM 		Detect ProductVersion of "syncthing.exe".
-SET FILEVER_BIN=%SCRIPT_PATH%filever.exe
+SET SIGCHECK_BIN=%SCRIPT_PATH%%SIGCHECK_FILENAME%
 SET SYNCTHING_EXE=%SCRIPT_PATH%Syncthing\syncthing.exe
 REM 
 SET SYNCTHING_EXE_PRODUCTVERSION=
-for /f "tokens=2 delims= " %%A in ('%FILEVER_BIN% /v %SYNCTHING_EXE% 2^>NUL: ^| findstr /i "ProductVersion" ^| sed -e "s/\t/ /g" -e "s/v//g"') do SET SYNCTHING_EXE_PRODUCTVERSION=%%A
+REG ADD "HKCU\Software\Sysinternals\sigcheck" /v "EulaAccepted" /t REG_DWORD /d 1 /f
+for /f "tokens=*" %%A in ('%SIGCHECK_BIN% -nobanner %SYNCTHING_EXE% 2^>NUL: ^| findstr /i /c:"Prod version:" ^| sed -e "s/\t/ /g" -e "s/.*: v//g"') do SET SYNCTHING_EXE_PRODUCTVERSION=%%A
 IF NOT DEFINED SYNCTHING_EXE_PRODUCTVERSION echo [ERROR] Could not determine ProductVersion of EXE. & goto :EOS
 echo [INFO] SYNCTHING_EXE_PRODUCTVERSION=v[%SYNCTHING_EXE_PRODUCTVERSION%]
 REM 
