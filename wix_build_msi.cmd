@@ -13,6 +13,8 @@ REM Consts: Prerequisites.
 SET GNU_SED_DEPENDENCIES_FILENAME=sed-4.2.1-dep.zip
 SET GNU_SED_BINARIES_FILENAME=sed-4.2.1-bin.zip
 SET NSSM_FILENAME=nssm-2.24-101-g897c7ad.zip
+SET SYNCTHING_VERSION=v1.4.0
+SET SYNCTHING_FILENAME=syncthing-windows-amd64-%SYNCTHING_VERSION%.zip
 REM 
 REM Download prerequisites.
 REM 	GNU SED
@@ -42,8 +44,21 @@ copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win32\nssm.exe" "%SCRIPT_PATH%\Synct
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x86.exe" echo [ERROR] File not found: nssm_x86.exe" & pause & goto :eof
 copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win64\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x64.exe"
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x64.exe" echo [ERROR] File not found: nssm_x64.exe" & pause & goto :eof
-
-
+REM 
+REM 	Syncthing
+echo [INFO] Downloading Syncthing ...
+IF NOT EXIST "%SCRIPT_PATH%%SYNCTHING_FILENAME%" call :psDownloadFile "https://github.com/syncthing/syncthing/releases/download/%SYNCTHING_VERSION%/%SYNCTHING_FILENAME%" "%SCRIPT_PATH%%SYNCTHING_FILENAME%"
+call :psExpandArchive "%SCRIPT_PATH%%SYNCTHING_FILENAME%" "%SCRIPT_PATH%"
+copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\AUTHORS.txt" "%SCRIPT_PATH%\Syncthing\AUTHORS.txt"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\AUTHORS.txt" echo [ERROR] File not found: AUTHORS.txt" & pause & goto :eof
+copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\LICENSE.txt" "%SCRIPT_PATH%\Syncthing\LICENSE.txt"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\LICENSE.txt" echo [ERROR] File not found: LICENSE.txt" & pause & goto :eof
+copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\README.txt" "%SCRIPT_PATH%\Syncthing\README.txt"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\README.txt" echo [ERROR] File not found: README.txt" & pause & goto :eof
+copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\syncthing.exe" "%SCRIPT_PATH%\Syncthing\syncthing.exe"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe" echo [ERROR] File not found: syncthing.exe" & pause & goto :eof
+copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\metadata\release.sig" "%SCRIPT_PATH%\Syncthing\syncthing.exe.sig"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe.sig" echo [ERROR] File not found: syncthing.exe.sig" & pause & goto :eof
 pause
 goto :eof
 REM 
