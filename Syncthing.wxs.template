@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- When increasing ProductVersion, change the ProductCode as well -->
+<?define Property_ProductVersion = "BATCH_PRODUCTVERSION" ?>
+<?define Property_ProductCode = "*" ?>
+<!-- Never change the UpgradeCode -->
+<?define Property_UpgradeCode = "7935185d-8022-473d-9789-eec7f0da8bbc" ?>
+<?define Property_ProductName = "Syncthing" ?>
+<?define Property_ProductComment = "Open Source Continuous File Synchronization" ?>
+<?define Property_ProductManufacturer = "The Syncthing Authors" ?>
+<?define Property_ServiceName = "Syncthing" ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+    <Product Id="$(var.Property_ProductCode)" Name="$(var.Property_ProductName)" Language="1033" Version="$(var.Property_ProductVersion)" Manufacturer="$(var.Property_ProductManufacturer)" UpgradeCode="$(var.Property_UpgradeCode)">
+        <Package Description="$(var.Property_ProductName)" Comments="$(var.Property_ProductComment)" InstallerVersion="200" Compressed="yes" InstallPrivileges="elevated" InstallScope="perMachine" />
+        <Upgrade Id="$(var.Property_UpgradeCode)">
+            <UpgradeVersion
+				Minimum="1.0.0" IncludeMinimum="yes"
+				Maximum="99.0.0" IncludeMaximum="no"
+				OnlyDetect="no"
+				Property="PREVIOUSFOUND" />
+        </Upgrade>
+        <CustomAction Id="CA_BlockOlderVersionInstall" Error="Cannot install over a more recent version" />
+        <CustomAction Id="CA_ErrWrongWindowsVersion" Error="This operating system is unsupported." />
+        <Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="CDrive" Name="CDrive">
+				<Directory Id="ServerSyncthingDir" Name="Syncthing">
+				</Directory>
+			</Directory>
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="ApplicationProgramsFolder" Name="$(var.Property_ProductName)" />
+			</Directory>
+        </Directory>
+
+        <SetDirectory Id="CDrive" Value="C:\Server" />
+
+		<Property Id='ARPPRODUCTICON' Value='ApplicationIcon' />
+
+		<SetProperty Id="WebUiUrl" Value="http://localhost:8384/" Sequence="execute"  Before="CreateShortcuts" />
+
+		<DirectoryRef Id="ApplicationProgramsFolder">
+			<Component Id="ApplicationShortcut" Guid="*">
+				<Shortcut Directory="ApplicationProgramsFolder" Id="ApplicationWebUiShortcut" Name="$(var.Property_ProductName) Web UI" Description="$(var.Property_ProductName) Web UI" Target="[WebUiUrl]" Icon="ApplicationIcon">
+					<Icon Id="ApplicationIcon" SourceFile="Syncthing\syncthing.ico" />
+				</Shortcut>
+				<RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+                <RegistryKey Root="HKCU" Key="Software\[Manufacturer]\[ProductName]">
+                    <RegistryValue Name="WebUiShortcutInstalled" Value="[ProductVersion]" Type="string" />
+                </RegistryKey>
+			</Component>
+		</DirectoryRef>
+
+        <DirectoryRef Id="ServerSyncthingDir">
+            <Component Id="Registration.xml" Guid="5a36b1c2-61e0-4837-8294-83085039fad3" DiskId="1">
+                <CreateFolder/>
+                <RemoveFolder Id="RemoveAppRootDirectory" On="uninstall" />
+                <File Id="SYNCTHING.EXE" Name="syncthing.exe" Source="Syncthing\syncthing.exe" />
+				<File Id="NSSM_X64.EXE" Name="nssm_x64.exe" Source="Syncthing\nssm_x64.exe" />
+				<File Id="SED.EXE" Name="sed.exe" Source="Syncthing\sed.exe" />
+				<File Id="LIBICONV2.DLL" Name="libiconv2.dll" Source="Syncthing\libiconv2.dll" />
+				<File Id="LIBINTL3.DLL" Name="libintl3.dll" Source="Syncthing\libintl3.dll" />
+				<File Id="REGEX2.DLL" Name="regex2.dll" Source="Syncthing\regex2.dll" />
+				<File Id="SYNCTHING.EXE.SIG" Name="syncthing.exe.sig" Source="Syncthing\syncthing.exe.sig" />
+				<File Id="AUTHORS.TXT" Name="AUTHORS.txt" Source="Syncthing\AUTHORS.txt" />
+				<File Id="LICENSE.TXT" Name="LICENSE.txt" Source="Syncthing\LICENSE.txt" />
+				<File Id="README.TXT" Name="README.txt" Source="Syncthing\README.txt" />
+				<File Id="SYNCTHING_UPGRADE.CMD" Name="syncthing_upgrade.cmd" Source="Syncthing\syncthing_upgrade.cmd" />
+				<File Id="SYNCTHING_REMOVE.CMD" Name="syncthing_remove.cmd" Source="Syncthing\syncthing_remove.cmd" />
+                <File Id="NSSM_X86.EXE" Name="nssm_x86.exe" Source="Syncthing\nssm_x86.exe" KeyPath="yes" />
+                <ServiceInstall
+					Id="NSSM_X86.EXE"
+					Type="ownProcess"
+					Vital="yes"
+					Name="$(var.Property_ServiceName)"
+					DisplayName="$(var.Property_ServiceName)"
+					Description="$(var.Property_ServiceName)"
+					Start="auto"
+					Account="NT AUTHORITY\SYSTEM"
+					ErrorControl="ignore"
+					Interactive="no" >
+				</ServiceInstall>
+				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="AppDirectory" Value="[CDrive]Syncthing"/>
+				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="Application" Value="[CDrive]Syncthing\syncthing.exe"/>
+				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="AppParameters" Value="-no-console -no-browser -home [CDrive]Syncthing\appdata"/>
+				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="integer" Name="AppStopMethodSkip" Value="8"/>
+				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters\AppExit" Type="string" Value="Restart"/>
+				<ServiceConfig ServiceName="$(var.Property_ServiceName)" DelayedAutoStart="yes" OnInstall="yes" OnReinstall ="yes" />
+				<ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="$(var.Property_ServiceName)" Wait="yes" />
+
+                <RegistryKey Root="HKLM" Key="Software\[Manufacturer]\[ProductName]">
+                    <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" />
+                </RegistryKey>
+            </Component>
+        </DirectoryRef>
+
+        <Feature Id="DefaultFeature" Title="Main Feature" Level="1">
+            <ComponentRef Id="ApplicationShortcut" />
+            <ComponentRef Id="Registration.xml" />
+        </Feature>
+
+        <Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
+        
+		<CustomAction 
+			Id="ExecSyncthingUpgradeCmd" 
+			Directory='ServerSyncthingDir' 
+			Execute='deferred' 
+			Impersonate='no' 
+			ExeCommand='[ServerSyncthingDir]syncthing_upgrade.cmd' 
+			Return='check'/>
+
+		<CustomAction 
+			Id="ExecSyncthingRemoveCmd" 
+			Directory='ServerSyncthingDir' 
+			Execute='immediate' 
+			Impersonate='no' 
+			ExeCommand='[ServerSyncthingDir]syncthing_remove.cmd' 
+			Return='check'/>
+
+        <!-- The InstallExecuteSequence table describes the order that actions will be executed during       -->
+        <!-- installation, repair and uninstall of this product.                                             -->
+        <InstallExecuteSequence>
+            <RemoveExistingProducts Before="InstallInitialize" />
+            <Custom Action="ExecSyncthingUpgradeCmd" After="InstallFiles">NOT REMOVE</Custom>
+            <Custom Action="ExecSyncthingRemoveCmd" Before="InstallFiles">REMOVE</Custom>
+            <LaunchConditions After="AppSearch"/>
+        </InstallExecuteSequence>
+
+        <UI />
+    </Product>
+</Wix>
