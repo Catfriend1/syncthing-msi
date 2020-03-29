@@ -1,12 +1,23 @@
 # Prerequisite download related
 nssm-*.zip
 sed-*.zip
+syncthing-windows-amd64-*.zip
 
 # Prerequisite extract related
 nssm-*/
 sed/
+syncthing-windows-amd64-v1.4.0/
+Syncthing/libiconv2.dll
+Syncthing/libintl3.dll
 Syncthing/nssm_x64.exe
 Syncthing/nssm_x86.exe
+Syncthing/regex2.dll
+Syncthing/sed.exe
+Syncthing/syncthing.exe
+Syncthing/syncthing.exe.sig
+Syncthing/AUTHORS.txt
+Syncthing/LICENSE.txt
+Syncthing/README.txt
 
 # WIX build process related
 *.msi
