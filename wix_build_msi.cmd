@@ -150,7 +150,7 @@ REM
 SET TMP_TARGET_FILENAME=%2
 IF DEFINED TMP_TARGET_FILENAME SET TMP_TARGET_FILENAME="%TMP_TARGET_FILENAME:"=%
 REM 
-powershell -ExecutionPolicy "ByPass" "(new-object System.Net.WebClient).DownloadFile('%TMP_URL_TO_DOWNLOAD%','%TMP_TARGET_FILENAME%')"
+powershell -ExecutionPolicy "ByPass" "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (new-object System.Net.WebClient).DownloadFile('%TMP_URL_TO_DOWNLOAD%','%TMP_TARGET_FILENAME%')"
 REM 
 goto :eof
 
