@@ -125,11 +125,11 @@ REM
 IF NOT "%DO_CLEANUP%" == "1" goto :eof
 REM 
 echo [INFO] Cleanup previous build ...
-del /f "%PRODUCT_WIX_OBJ%" 2> NUL:
+IF DEFINED PRODUCT_WIX_OBJ del /f "%PRODUCT_WIX_OBJ%" 2> NUL:
 REM del /f "%FILES_WIX_OBJ%" 2> NUL:
-del /f "%WIX_INPUT_SCRIPT%" 2> NUL:
+IF DEFINED WIX_INPUT_SCRIPT del /f "%WIX_INPUT_SCRIPT%" 2> NUL:
 REM del /f "%WIX_FILES_SCRIPT%" 2> NUL:
-del /f "%WIX_PDB%" 2> NUL:
+IF DEFINED WIX_PDB del /f "%WIX_PDB%" 2> NUL:
 REM 
 goto :eof
 
