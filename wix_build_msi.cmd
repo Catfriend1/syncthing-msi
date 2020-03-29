@@ -59,8 +59,11 @@ copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\syncthing.exe" "%SCRIPT_PATH%\S
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe" echo [ERROR] File not found: syncthing.exe" & pause & goto :eof
 copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\metadata\release.sig" "%SCRIPT_PATH%\Syncthing\syncthing.exe.sig"
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe.sig" echo [ERROR] File not found: syncthing.exe.sig" & pause & goto :eof
-pause
-goto :eof
+REM 
+REM Testing prerequisites.
+SET "PATH=%PATH%;%SCRIPT_PATH%\Syncthing"
+where /q sed
+IF NOT "%ERRORLEVEL%" == "0" echo [ERROR] sed.exe not found on PATH env var. & pause & goto :eof
 REM 
 REM Runtime Vars.
 SET WIX_TOOLKIT_DIR_NAME=
