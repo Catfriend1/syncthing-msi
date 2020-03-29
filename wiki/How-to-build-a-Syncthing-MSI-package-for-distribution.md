@@ -14,16 +14,20 @@ HOW-TO: Build your OWN Syncthing MSI package
 2) Extract the downloaded "syncthing-msi-1.4.0.zip" to "C:\Temp".
 
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/syncthing-msi-1.4.0-zip.png)
+
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/extract-zip-folder.png)
 
 3) The folder "C:\Temp\syncthing-msi-v1.4.0" will open after extraction.
+
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/folder-after-zip-extraction.png)
 
 4) Double-click to launch "wix_build_msi.cmd".
 The script will download portable prerequisites like GNU sed, Non-sucking-service-manager, Microsoft Sigcheck64, Syncthing and WiX Toolset. It will then build the MSI package using the latest Syncthing win-amd64 version - at time of writing v1.4.0.
+
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/build-console-log.png)
 
 5) Close the build output console window and look at your "C:\Temp\syncthing-msi" folder. Notice the file "Syncthing_v1.4.0.msi" was created.
+
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/folder-after-msi-build.png)
 
 Done, your MSI package is ready for interactive installation or domain deployment via group policy.
@@ -37,12 +41,15 @@ WARNING: You should FIRST consider how you secure Syncthing’s Web UI interface
 TIP: I recommend to install the MSI package on a virtual machine if this is your first try. So you can first see if it fits your needs or if you require editing the default Syncthing settings in the BATCH script.
 
 1. We’ve already built "Syncthing_v1.4.0.msi" during the how-to above. Let’s double click it to install it.
+
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/syncthing-v1.4.0-msi.png)
 
 2. The installer may ask for administrative permission to setup the Windows service called "Syncthing" and an incoming firewall rule to get you starting.
+
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/windows-admin-prompt.png)
 
 3. Continue and wait until the installation completed.
+
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/please-wait-while-windows-configures-syncthing.png)
 
 After setup is complete, the Syncthing service should be running. You could verify that - optionally - by looking in Windows services from the Control Panel.
