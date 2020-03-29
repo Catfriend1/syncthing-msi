@@ -9,6 +9,21 @@ REM Consts.
 SET DO_CLEANUP=1
 SET PRODUCT_NAME=Syncthing
 REM 
+REM Consts: Prerequisites.
+SET NSSM_FILENAME=nssm-2.24-101-g897c7ad.zip
+REM 
+REM Download prerequisites.
+IF NOT EXIST "%SCRIPT_PATH%%NSSM_FILENAME%" call :psDownloadFile "https://nssm.cc/ci/%NSSM_FILENAME%" "%SCRIPT_PATH%%NSSM_FILENAME%"
+call :psExpandArchive "%SCRIPT_PATH%%NSSM_FILENAME%" "%SCRIPT_PATH%"
+copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win32\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x86.exe"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x86.exe" echo [ERROR] File not found: nssm_x86.exe" & pause & goto :eof
+copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win64\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x64.exe"
+IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x64.exe" echo [ERROR] File not found: nssm_x64.exe" & pause & goto :eof
+
+
+pause
+goto :eof
+REM 
 REM Runtime Vars.
 SET WIX_TOOLKIT_DIR_NAME=
 for /f "tokens=*" %%A in ('dir /b /a:d "%ProgramFiles(x86)%\Wix Toolset v*"') do SET WIX_TOOLKIT_DIR_NAME=%%A
@@ -83,4 +98,30 @@ REM
 call :cleanUp
 REM
 pause
+goto :eof
+
+
+:psDownloadFile
+REM 
+SET TMP_URL_TO_DOWNLOAD=%1
+IF DEFINED TMP_URL_TO_DOWNLOAD SET TMP_URL_TO_DOWNLOAD="%TMP_URL_TO_DOWNLOAD:"=%
+REM 
+SET TMP_TARGET_FILENAME=%2
+IF DEFINED TMP_TARGET_FILENAME SET TMP_TARGET_FILENAME="%TMP_TARGET_FILENAME:"=%
+REM 
+powershell -ExecutionPolicy "ByPass" "(new-object System.Net.WebClient).DownloadFile('%TMP_URL_TO_DOWNLOAD%','%TMP_TARGET_FILENAME%')"
+REM 
+goto :eof
+
+
+:psExpandArchive
+REM 
+SET TMP_ARCHIVE_FULLFN=%1
+IF DEFINED TMP_ARCHIVE_FULLFN SET TMP_ARCHIVE_FULLFN="%TMP_ARCHIVE_FULLFN:"=%
+REM 
+SET TMP_TARGET_FOLDER=%2
+IF DEFINED TMP_TARGET_FOLDER SET TMP_TARGET_FOLDER="%TMP_TARGET_FOLDER:"=%
+REM 
+powershell -ExecutionPolicy "ByPass" "Expand-Archive '%TMP_ARCHIVE_FULLFN%' -DestinationPath '%TMP_TARGET_FOLDER%' -Force"
+REM 
 goto :eof
