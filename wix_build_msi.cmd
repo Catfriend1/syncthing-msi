@@ -95,7 +95,7 @@ del /f "%WIX_PDB%" 2> NUL:
 REM
 if NOT EXIST %MSI_TARGET% echo [ERROR] Failed to merge MSI in step #2 & goto :EOS
 REM 
-echo Done.
+echo [INFO] Done.
 goto :EOS
 
 
