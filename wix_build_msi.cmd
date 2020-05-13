@@ -23,8 +23,6 @@ IF NOT EXIST "%SCRIPT_PATH%%NSSM_FILENAME%" call :psDownloadFile "https://nssm.c
 call :psExpandArchive "%SCRIPT_PATH%%NSSM_FILENAME%" "%SCRIPT_PATH%"
 copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win32\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x86.exe"
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x86.exe" echo [ERROR] File not found: nssm_x86.exe & pause & goto :eof
-copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win64\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x64.exe"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x64.exe" echo [ERROR] File not found: nssm_x64.exe & pause & goto :eof
 REM 
 REM 	Syncthing
 echo [INFO] Downloading Syncthing ...
