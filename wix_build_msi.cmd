@@ -52,8 +52,6 @@ IF NOT EXIST %WIX_LIGHT_BIN% echo [ERROR] File not found: wix\light.exe & pause 
 REM 
 REM Testing prerequisites.
 SET "PATH=%PATH%;%SCRIPT_PATH%\Syncthing"
-where /q sed
-IF NOT "%ERRORLEVEL%" == "0" echo [ERROR] sed.exe not found on PATH env var. & pause & goto :eof
 REM 
 REM Runtime Vars.
 REM 
@@ -65,13 +63,12 @@ REM 		Detect ProductVersion of "syncthing.exe".
 SET SYNCTHING_EXE=%SCRIPT_PATH%Syncthing\syncthing.exe
 REM 
 SET SYNCTHING_EXE_PRODUCTVERSION=
-REG ADD "HKCU\Software\Sysinternals\sigcheck" /v "EulaAccepted" /t REG_DWORD /d 1 /f
-for /f "tokens=*" %%A in ('%SIGCHECK_BIN% -nobanner %SYNCTHING_EXE% 2^>NUL: ^| findstr /i /c:"Prod version:" ^| sed -e "s/\t/ /g" -e "s/.*: v//g"') do SET SYNCTHING_EXE_PRODUCTVERSION=%%A
+for /f "tokens=*" %%A in ('powershell -ExecutionPolicy "ByPass" "(Get-Item -path \"%SYNCTHING_EXE%\").VersionInfo.ProductVersion"') do SET SYNCTHING_EXE_PRODUCTVERSION=%%A
 IF NOT DEFINED SYNCTHING_EXE_PRODUCTVERSION echo [ERROR] Could not determine ProductVersion of EXE. & goto :EOS
 echo [INFO] SYNCTHING_EXE_PRODUCTVERSION=v[%SYNCTHING_EXE_PRODUCTVERSION%]
 REM 
 REM 		Update WIX_INPUT_SCRIPT with SYNCTHING_EXE_PRODUCTVERSION.
-type %WIX_INPUT_SCRIPT_TEMPLATE% | sed -e "s/BATCH_PRODUCTVERSION/%SYNCTHING_EXE_PRODUCTVERSION%/g" > %WIX_INPUT_SCRIPT%
+type %WIX_INPUT_SCRIPT_TEMPLATE% | Syncthing\psreplace "BATCH_PRODUCTVERSION" "%SYNCTHING_EXE_PRODUCTVERSION%" > %WIX_INPUT_SCRIPT%
 REM 
 REM 	Output files
 SET PRODUCT_WIX_OBJ="%SCRIPT_PATH%%PRODUCT_NAME%.wixobj"
