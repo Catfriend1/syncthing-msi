@@ -3,7 +3,7 @@
 <?define Property_ProductVersion = "BATCH_PRODUCTVERSION" ?>
 <?define Property_ProductCode = "*" ?>
 <!-- Never change the UpgradeCode -->
-<?define Property_UpgradeCode = "7935185d-8022-473d-9789-eec7f0da8bbc" ?>
+<?define Property_UpgradeCode = "0DDAC7F1-2657-4E46-9EBB-46F41825138C" ?>
 <?define Property_ProductName = "Syncthing" ?>
 <?define Property_ProductComment = "Open Source Continuous File Synchronization" ?>
 <?define Property_ProductManufacturer = "The Syncthing Authors" ?>
@@ -24,6 +24,7 @@
         <Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="CDrive" Name="CDrive">
 				<Directory Id="ServerSyncthingDir" Name="Syncthing">
+					<!-- <Directory Id="ServerSyncthingAppdataDir" Name="appdata" /> -->
 				</Directory>
 			</Directory>
 			<Directory Id="ProgramMenuFolder">
@@ -34,12 +35,31 @@
         <SetDirectory Id="CDrive" Value="C:\Server" />
 
 		<Property Id='ARPPRODUCTICON' Value='ApplicationIcon' />
-
-		<SetProperty Id="WebUiUrl" Value="http://localhost:8384/" Sequence="execute"  Before="CreateShortcuts" />
+		
+		<!-- App specific properties -->
+		<!-- Leave ADD_DEVICE_HOST at the pre-defined value if you do not need to enroll a new device -->
+		<Property Id='ADD_DEVICE_HOST' Value='localhost.localdomain' />
+		<Property Id='ADD_DEVICE_ID' Value='CF6WMOG-F4RHVKW-2FTJONJ-GJ3FZQS-YW5TJVW-VDDT6ZQ-EVJ2WDP-RL4QZQO' />
+		<Property Id='ADD_DEVICE_PORT' Value='22000' />
+		<Property Id='crashReportingEnabled' Value='false' />
+		<Property Id='DATA_PORT' Value='22000' />
+		<Property Id='globalAnnounceEnabled' Value='true' />
+		<Property Id='hashers' Value='0' />
+		<Property Id='localAnnounceEnabled' Value='true' />
+		<Property Id='natEnabled' Value='true' />
+		<Property Id='OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME' Value='1' />
+		<Property Id='OVERRIDE_EXISTING_CONFIG' Value='0' />
+		<Property Id='relaysEnabled' Value='true' />
+		<Property Id='REMOTE_WEB_UI' Value='0' />
+		<!-- SERVICE_ACCOUNT options: LOCALSERVICE, NETWORKSERVICE, SYSTEM -->
+		<Property Id='SERVICE_ACCOUNT' Value='LOCALSERVICE' />
+		<Property Id='STNOUPGRADE' Value='1' />
+		<Property Id='urAccepted' Value='-1' />
+		<Property Id='WEB_UI_PORT' Value='8384' />
 
 		<DirectoryRef Id="ApplicationProgramsFolder">
 			<Component Id="ApplicationShortcut" Guid="*">
-				<Shortcut Directory="ApplicationProgramsFolder" Id="ApplicationWebUiShortcut" Name="$(var.Property_ProductName) Web UI" Description="$(var.Property_ProductName) Web UI" Target="[WebUiUrl]" Icon="ApplicationIcon">
+				<Shortcut Directory="ApplicationProgramsFolder" Id="ApplicationWebUiShortcut" Name="$(var.Property_ProductName) Web UI" Description="$(var.Property_ProductName) Web UI" Target="[ServerSyncthingDir]syncthing_webui.cmd" Icon="ApplicationIcon" Show="minimized">
 					<Icon Id="ApplicationIcon" SourceFile="Syncthing\syncthing.ico" />
 				</Shortcut>
 				<RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
@@ -50,21 +70,20 @@
 		</DirectoryRef>
 
         <DirectoryRef Id="ServerSyncthingDir">
-            <Component Id="Registration.xml" Guid="5a36b1c2-61e0-4837-8294-83085039fad3" DiskId="1">
+            <Component Id="Registration.xml" Guid="33EC1435-32F7-4CB7-94DB-50E146B44D62" DiskId="1">
                 <CreateFolder/>
                 <RemoveFolder Id="RemoveAppRootDirectory" On="uninstall" />
                 <File Id="SYNCTHING.EXE" Name="syncthing.exe" Source="Syncthing\syncthing.exe" />
-				<File Id="NSSM_X64.EXE" Name="nssm_x64.exe" Source="Syncthing\nssm_x64.exe" />
-				<File Id="SED.EXE" Name="sed.exe" Source="Syncthing\sed.exe" />
-				<File Id="LIBICONV2.DLL" Name="libiconv2.dll" Source="Syncthing\libiconv2.dll" />
-				<File Id="LIBINTL3.DLL" Name="libintl3.dll" Source="Syncthing\libintl3.dll" />
-				<File Id="REGEX2.DLL" Name="regex2.dll" Source="Syncthing\regex2.dll" />
-				<File Id="SYNCTHING.EXE.SIG" Name="syncthing.exe.sig" Source="Syncthing\syncthing.exe.sig" />
 				<File Id="AUTHORS.TXT" Name="AUTHORS.txt" Source="Syncthing\AUTHORS.txt" />
 				<File Id="LICENSE.TXT" Name="LICENSE.txt" Source="Syncthing\LICENSE.txt" />
 				<File Id="README.TXT" Name="README.txt" Source="Syncthing\README.txt" />
-				<File Id="SYNCTHING_UPGRADE.CMD" Name="syncthing_upgrade.cmd" Source="Syncthing\syncthing_upgrade.cmd" />
+				<File Id="PSREPLACE.CMD" Name="psreplace.cmd" Source="Syncthing\psreplace.cmd" />
+				<File Id="SYNCTHING_GRANT_FOLDER_ACCESS.CMD" Name="syncthing_grant_folder_access.cmd" Source="Syncthing\syncthing_grant_folder_access.cmd" />
 				<File Id="SYNCTHING_REMOVE.CMD" Name="syncthing_remove.cmd" Source="Syncthing\syncthing_remove.cmd" />
+				<File Id="SYNCTHING_STRECHECKDBEVERY_OFF.CMD" Name="syncthing_strecheckdbevery_off.cmd" Source="Syncthing\syncthing_strecheckdbevery_off.cmd" />
+				<File Id="SYNCTHING_STRECHECKDBEVERY_ON.CMD" Name="syncthing_strecheckdbevery_on.cmd" Source="Syncthing\syncthing_strecheckdbevery_on.cmd" />
+				<File Id="SYNCTHING_UPGRADE.CMD" Name="syncthing_upgrade.cmd" Source="Syncthing\syncthing_upgrade.cmd" />
+				<File Id="SYNCTHING_WEBUI.CMD" Name="syncthing_webui.cmd" Source="Syncthing\syncthing_webui.cmd" />
                 <File Id="NSSM_X86.EXE" Name="nssm_x86.exe" Source="Syncthing\nssm_x86.exe" KeyPath="yes" />
                 <ServiceInstall
 					Id="NSSM_X86.EXE"
@@ -74,27 +93,59 @@
 					DisplayName="$(var.Property_ServiceName)"
 					Description="$(var.Property_ServiceName)"
 					Start="auto"
-					Account="NT AUTHORITY\SYSTEM"
+					Account="NT AUTHORITY\[SERVICE_ACCOUNT]"
 					ErrorControl="ignore"
 					Interactive="no" >
 				</ServiceInstall>
+				<!--<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)" Type="integer" Name="DelayedAutostart" Value="1"/>-->
 				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="AppDirectory" Value="[CDrive]Syncthing"/>
 				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="Application" Value="[CDrive]Syncthing\syncthing.exe"/>
 				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="AppParameters" Value="-no-console -no-browser -home [CDrive]Syncthing\appdata"/>
 				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="integer" Name="AppStopMethodSkip" Value="8"/>
-				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters\AppExit" Type="string" Value="Restart"/>
+				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters\AppExit" Type="string" Value="Exit"/>
 				<ServiceConfig ServiceName="$(var.Property_ServiceName)" DelayedAutoStart="yes" OnInstall="yes" OnReinstall ="yes" />
 				<ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="$(var.Property_ServiceName)" Wait="yes" />
 
                 <RegistryKey Root="HKLM" Key="Software\[Manufacturer]\[ProductName]">
                     <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" />
                 </RegistryKey>
+                
+                <!-- App specific properties -->
+                <RegistryKey Root="HKLM" Key="Software\[Manufacturer]\[ProductName]">
+					<RegistryValue Name="ADD_DEVICE_HOST" Value="[ADD_DEVICE_HOST]" Type="string" />
+					<RegistryValue Name="ADD_DEVICE_ID" Value="[ADD_DEVICE_ID]" Type="string" />
+					<RegistryValue Name="ADD_DEVICE_PORT" Value="[ADD_DEVICE_PORT]" Type="string" />
+					<RegistryValue Name="crashReportingEnabled" Value="[crashReportingEnabled]" Type="string" />
+					<RegistryValue Name="DATA_PORT" Value="[DATA_PORT]" Type="string" />
+					<RegistryValue Name="globalAnnounceEnabled" Value="[globalAnnounceEnabled]" Type="string" />
+					<RegistryValue Name="hashers" Value="[hashers]" Type="string" />
+					<RegistryValue Name="localAnnounceEnabled" Value="[localAnnounceEnabled]" Type="string" />
+					<RegistryValue Name="natEnabled" Value="[natEnabled]" Type="string" />
+					<RegistryValue Name="OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME" Value="[OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME]" Type="string" />
+					<RegistryValue Name="OVERRIDE_EXISTING_CONFIG" Value="[OVERRIDE_EXISTING_CONFIG]" Type="string" />
+					<RegistryValue Name="relaysEnabled" Value="[relaysEnabled]" Type="string" />
+					<RegistryValue Name="REMOTE_WEB_UI" Value="[REMOTE_WEB_UI]" Type="string" />
+					<RegistryValue Name="STNOUPGRADE" Value="[STNOUPGRADE]" Type="string" />
+					<RegistryValue Name="urAccepted" Value="[urAccepted]" Type="string" />
+					<RegistryValue Name="WEB_UI_PORT" Value="[WEB_UI_PORT]" Type="string" />
+                </RegistryKey>
             </Component>
         </DirectoryRef>
+        
+        <!--
+        <DirectoryRef Id="ServerSyncthingAppdataDir">
+            <Component Id="ServerSyncthingAppdataUserAccess" Guid="41111f53-f8ee-4776-a303-6bc39c3f2133" DiskId="1">
+				<CreateFolder>
+					<util:PermissionEx User="Users" GenericRead="yes" GenericWrite="yes" GenericExecute="yes" Delete="yes" ChangePermission="yes" />
+				</CreateFolder>
+            </Component>
+        </DirectoryRef>
+        -->
 
         <Feature Id="DefaultFeature" Title="Main Feature" Level="1">
             <ComponentRef Id="ApplicationShortcut" />
             <ComponentRef Id="Registration.xml" />
+            <!-- <ComponentRef Id="ServerSyncthingAppdataUserAccess" /> -->
         </Feature>
 
         <Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
@@ -118,8 +169,13 @@
         <!-- The InstallExecuteSequence table describes the order that actions will be executed during       -->
         <!-- installation, repair and uninstall of this product.                                             -->
         <InstallExecuteSequence>
+			<!--
+            <Custom Action="CA_BlockOlderVersionInstall" After="FindRelatedProducts">
+                <![CDATA[NEWERVERSIONDETECTED]]>
+            </Custom>
+            -->
             <RemoveExistingProducts Before="InstallInitialize" />
-            <Custom Action="ExecSyncthingUpgradeCmd" After="InstallFiles">NOT REMOVE</Custom>
+            <Custom Action="ExecSyncthingUpgradeCmd" After="WriteRegistryValues">NOT REMOVE</Custom>
             <Custom Action="ExecSyncthingRemoveCmd" Before="InstallFiles">REMOVE</Custom>
             <LaunchConditions After="AppSearch"/>
         </InstallExecuteSequence>
