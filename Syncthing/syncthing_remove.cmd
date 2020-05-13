@@ -27,6 +27,9 @@ REM Configure Windows Firewall
 call :logAdd "[INFO] removeSyncthing: Firewall - Deleting previously created rules ..."
 netsh advfirewall firewall delete rule name="%SYNCTHING_TITLE%" dir="in"
 REM 
+REM Delete env vars.
+SETX /M "STNOUPGRADE" ""
+REM 
 REM Delete log file on success.
 DEL /F "%LOGFILE%" 2> NUL:
 REM 
