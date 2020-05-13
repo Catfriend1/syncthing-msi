@@ -10,33 +10,12 @@ SET DO_CLEANUP=1
 SET PRODUCT_NAME=Syncthing
 REM 
 REM Consts: Prerequisites.
-SET GNU_SED_DEPENDENCIES_FILENAME=sed-4.2.1-dep.zip
-SET GNU_SED_BINARIES_FILENAME=sed-4.2.1-bin.zip
 SET NSSM_FILENAME=nssm-2.24-101-g897c7ad.zip
-SET SIGCHECK_FILENAME=sigcheck64.exe
-SET SYNCTHING_VERSION=v1.4.0
+SET SYNCTHING_VERSION=v1.5.0
 SET SYNCTHING_FILENAME=syncthing-windows-amd64-%SYNCTHING_VERSION%.zip
 SET WIX_TOOLSET_FILENAME=wix311-binaries.zip
 REM 
 REM Download prerequisites.
-REM 	GNU SED
-REM 		Binaries
-echo [INFO] Downloading GNU SED Binaries ...
-IF NOT EXIST "%SCRIPT_PATH%%GNU_SED_BINARIES_FILENAME%" call :psDownloadFile "http://sourceforge.net/projects/gnuwin32/files//sed/4.2.1/%GNU_SED_BINARIES_FILENAME%/download" "%SCRIPT_PATH%%GNU_SED_BINARIES_FILENAME%"
-call :psExpandArchive "%SCRIPT_PATH%%GNU_SED_BINARIES_FILENAME%" "%SCRIPT_PATH%sed"
-copy /y "%SCRIPT_PATH%sed\bin\sed.exe" "%SCRIPT_PATH%\Syncthing\sed.exe"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\sed.exe" echo [ERROR] File not found: sed.exe & pause & goto :eof
-REM 
-REM 		Dependencies
-echo [INFO] Downloading GNU SED Dependencies ...
-IF NOT EXIST "%SCRIPT_PATH%%GNU_SED_DEPENDENCIES_FILENAME%" call :psDownloadFile "http://sourceforge.net/projects/gnuwin32/files//sed/4.2.1/%GNU_SED_DEPENDENCIES_FILENAME%/download" "%SCRIPT_PATH%%GNU_SED_DEPENDENCIES_FILENAME%"
-call :psExpandArchive "%SCRIPT_PATH%%GNU_SED_DEPENDENCIES_FILENAME%" "%SCRIPT_PATH%sed"
-copy /y "%SCRIPT_PATH%sed\bin\libiconv2.dll" "%SCRIPT_PATH%\Syncthing\libiconv2.dll"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\libiconv2.dll" echo [ERROR] File not found: libiconv2.dll & pause & goto :eof
-copy /y "%SCRIPT_PATH%sed\bin\libintl3.dll" "%SCRIPT_PATH%\Syncthing\libintl3.dll"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\libintl3.dll" echo [ERROR] File not found: libintl3.dll & pause & goto :eof
-copy /y "%SCRIPT_PATH%sed\bin\regex2.dll" "%SCRIPT_PATH%\Syncthing\regex2.dll"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\regex2.dll" echo [ERROR] File not found: regex2.dll & pause & goto :eof
 REM 
 REM 	NSSM
 echo [INFO] Downloading NSSM ...
@@ -44,13 +23,6 @@ IF NOT EXIST "%SCRIPT_PATH%%NSSM_FILENAME%" call :psDownloadFile "https://nssm.c
 call :psExpandArchive "%SCRIPT_PATH%%NSSM_FILENAME%" "%SCRIPT_PATH%"
 copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win32\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x86.exe"
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x86.exe" echo [ERROR] File not found: nssm_x86.exe & pause & goto :eof
-copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win64\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x64.exe"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x64.exe" echo [ERROR] File not found: nssm_x64.exe & pause & goto :eof
-REM 
-REM   Sigcheck
-echo [INFO] Downloading Sigcheck ...
-IF NOT EXIST "%SCRIPT_PATH%%SIGCHECK_FILENAME%" call :psDownloadFile "http://live.sysinternals.com/%SIGCHECK_FILENAME%" "%SCRIPT_PATH%%SIGCHECK_FILENAME%"
-IF NOT EXIST "%SCRIPT_PATH%%SIGCHECK_FILENAME%" echo [ERROR] File not found: %SIGCHECK_FILENAME% & pause & goto :eof
 REM 
 REM 	Syncthing
 echo [INFO] Downloading Syncthing ...
@@ -64,8 +36,6 @@ copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\README.txt" "%SCRIPT_PATH%\Sync
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\README.txt" echo [ERROR] File not found: README.txt & pause & goto :eof
 copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\syncthing.exe" "%SCRIPT_PATH%\Syncthing\syncthing.exe"
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe" echo [ERROR] File not found: syncthing.exe & pause & goto :eof
-copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\metadata\release.sig" "%SCRIPT_PATH%\Syncthing\syncthing.exe.sig"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe.sig" echo [ERROR] File not found: syncthing.exe.sig & pause & goto :eof
 REM 
 REM   WiX Toolset
 echo [INFO] Downloading WiX Toolset ...
@@ -78,8 +48,6 @@ IF NOT EXIST %WIX_LIGHT_BIN% echo [ERROR] File not found: wix\light.exe & pause 
 REM 
 REM Testing prerequisites.
 SET "PATH=%PATH%;%SCRIPT_PATH%\Syncthing"
-where /q sed
-IF NOT "%ERRORLEVEL%" == "0" echo [ERROR] sed.exe not found on PATH env var. & pause & goto :eof
 REM 
 REM Runtime Vars.
 REM 
@@ -88,17 +56,15 @@ SET WIX_INPUT_SCRIPT_TEMPLATE="%SCRIPT_PATH%%PRODUCT_NAME%.wxs.template"
 SET WIX_INPUT_SCRIPT="%SCRIPT_PATH%%PRODUCT_NAME%.wxs"
 REM 
 REM 		Detect ProductVersion of "syncthing.exe".
-SET SIGCHECK_BIN=%SCRIPT_PATH%%SIGCHECK_FILENAME%
 SET SYNCTHING_EXE=%SCRIPT_PATH%Syncthing\syncthing.exe
 REM 
 SET SYNCTHING_EXE_PRODUCTVERSION=
-REG ADD "HKCU\Software\Sysinternals\sigcheck" /v "EulaAccepted" /t REG_DWORD /d 1 /f
-for /f "tokens=*" %%A in ('%SIGCHECK_BIN% -nobanner %SYNCTHING_EXE% 2^>NUL: ^| findstr /i /c:"Prod version:" ^| sed -e "s/\t/ /g" -e "s/.*: v//g"') do SET SYNCTHING_EXE_PRODUCTVERSION=%%A
+for /f "tokens=*" %%A in ('powershell -ExecutionPolicy "ByPass" "(Get-Item -path \"%SYNCTHING_EXE%\").VersionInfo.ProductVersion"') do SET SYNCTHING_EXE_PRODUCTVERSION=%%A
 IF NOT DEFINED SYNCTHING_EXE_PRODUCTVERSION echo [ERROR] Could not determine ProductVersion of EXE. & goto :EOS
 echo [INFO] SYNCTHING_EXE_PRODUCTVERSION=v[%SYNCTHING_EXE_PRODUCTVERSION%]
 REM 
 REM 		Update WIX_INPUT_SCRIPT with SYNCTHING_EXE_PRODUCTVERSION.
-type %WIX_INPUT_SCRIPT_TEMPLATE% | sed -e "s/BATCH_PRODUCTVERSION/%SYNCTHING_EXE_PRODUCTVERSION%/g" > %WIX_INPUT_SCRIPT%
+type %WIX_INPUT_SCRIPT_TEMPLATE% | Syncthing\psreplace "BATCH_PRODUCTVERSION" "%SYNCTHING_EXE_PRODUCTVERSION%" > %WIX_INPUT_SCRIPT%
 REM 
 REM 	Output files
 SET PRODUCT_WIX_OBJ="%SCRIPT_PATH%%PRODUCT_NAME%.wixobj"
@@ -125,7 +91,7 @@ del /f "%WIX_PDB%" 2> NUL:
 REM
 if NOT EXIST %MSI_TARGET% echo [ERROR] Failed to merge MSI in step #2 & goto :EOS
 REM 
-echo Done.
+echo [INFO] Done.
 goto :EOS
 
 
