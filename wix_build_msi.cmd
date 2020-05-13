@@ -36,8 +36,6 @@ copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\README.txt" "%SCRIPT_PATH%\Sync
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\README.txt" echo [ERROR] File not found: README.txt & pause & goto :eof
 copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\syncthing.exe" "%SCRIPT_PATH%\Syncthing\syncthing.exe"
 IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe" echo [ERROR] File not found: syncthing.exe & pause & goto :eof
-copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\metadata\release.sig" "%SCRIPT_PATH%\Syncthing\syncthing.exe.sig"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe.sig" echo [ERROR] File not found: syncthing.exe.sig & pause & goto :eof
 REM 
 REM   WiX Toolset
 echo [INFO] Downloading WiX Toolset ...
