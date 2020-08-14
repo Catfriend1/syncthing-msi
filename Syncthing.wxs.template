@@ -80,6 +80,7 @@
 				<File Id="PSREPLACE.CMD" Name="psreplace.cmd" Source="Syncthing\psreplace.cmd" />
 				<File Id="SYNCTHING_GRANT_FOLDER_ACCESS.CMD" Name="syncthing_grant_folder_access.cmd" Source="Syncthing\syncthing_grant_folder_access.cmd" />
 				<File Id="SYNCTHING_REMOVE.CMD" Name="syncthing_remove.cmd" Source="Syncthing\syncthing_remove.cmd" />
+				<File Id="SYNCTHING_SERVICE.CMD" Name="syncthing_service.cmd" Source="Syncthing\syncthing_service.cmd" />
 				<File Id="SYNCTHING_STRECHECKDBEVERY_OFF.CMD" Name="syncthing_strecheckdbevery_off.cmd" Source="Syncthing\syncthing_strecheckdbevery_off.cmd" />
 				<File Id="SYNCTHING_STRECHECKDBEVERY_ON.CMD" Name="syncthing_strecheckdbevery_on.cmd" Source="Syncthing\syncthing_strecheckdbevery_on.cmd" />
 				<File Id="SYNCTHING_UPGRADE.CMD" Name="syncthing_upgrade.cmd" Source="Syncthing\syncthing_upgrade.cmd" />
@@ -99,7 +100,7 @@
 				</ServiceInstall>
 				<!--<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)" Type="integer" Name="DelayedAutostart" Value="1"/>-->
 				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="AppDirectory" Value="[CDrive]Syncthing"/>
-				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="Application" Value="[CDrive]Syncthing\syncthing.exe"/>
+				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="Application" Value="[CDrive]Syncthing\syncthing_service.cmd"/>
 				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="expandable" Name="AppParameters" Value="-no-console -no-browser -home [CDrive]Syncthing\appdata"/>
 				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters" Type="integer" Name="AppStopMethodSkip" Value="8"/>
 				<RegistryValue Root="HKLM" Key="SYSTEM\CurrentControlSet\Services\$(var.Property_ServiceName)\Parameters\AppExit" Type="string" Value="Exit"/>
