@@ -9,15 +9,15 @@ I'll now showcase where to find the MSI build script and how to use it.
 
 HOW-TO: Build your OWN Syncthing MSI package
 
-1) Head to my batch repo at https://github.com/Catfriend1/syncthing-msi/releases/tag/v1.4.0 and download the GIT workspace from https://github.com/Catfriend1/syncthing-msi/archive/v1.4.0.zip .
+1) Head to my batch repo at https://github.com/Catfriend1/syncthing-msi/releases/latest and download the GIT workspace from https://github.com/Catfriend1/syncthing-msi/archive/master.zip .
 
-2) Extract the downloaded "syncthing-msi-1.4.0.zip" to "C:\Temp".
+2) Extract the downloaded "syncthing-msi-master.zip" to "C:\Temp".
 
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/syncthing-msi-1.4.0-zip.png)
 
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/extract-zip-folder.png)
 
-3) The folder "C:\Temp\syncthing-msi-v1.4.0" will open after extraction.
+3) The folder "C:\Temp\syncthing-msi-master" will open after extraction.
 
 ![](https://github.com/Catfriend1/syncthing-msi/blob/master/wiki/images/folder-after-zip-extraction.png)
 
