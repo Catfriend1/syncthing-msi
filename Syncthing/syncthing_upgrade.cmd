@@ -77,7 +77,7 @@ call :editConfigXml "<urAccepted>.*<\/urAccepted>" "<urAccepted>%PROPERTY_UR_ACC
 call :editConfigXml "<urSeen>.*<\/urSeen>" "<urSeen>3</urSeen>"
 REM 
 REM 	Remove Default Shared Folder
-call :editConfigXml "(?s)\r\n\s+<folder id=`default` .*?<\/folder>" ""
+call :editConfigXml "(?s)\r\n\s+<folder id=\`default\` .*?<\/folder>" ""
 REM 
 REM 	Default Folder Path
 call :editConfigXml "<defaultFolderPath>~<\/defaultFolderPath>" "<defaultFolderPath>%SystemDrive%\Server\Sync</defaultFolderPath>"
