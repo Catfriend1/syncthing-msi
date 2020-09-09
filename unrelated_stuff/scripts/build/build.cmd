@@ -7,24 +7,18 @@ REM
 REM Script Consts.
 SET BUILD_HOST=host
 SET BUILD_USER=user
-SET TARGET_VER=v1.4.1-symlink
-REM 
-SET GIT_BIN=
-FOR /F "tokens=*" %%A IN ('where git 2^> NUL:') DO SET GIT_BIN="%%A"
+SET TARGET_VER=v1.9.0
 REM 
 SET GO_ROOT=%ProgramFiles%\Go
 SET GO_BIN="%GO_ROOT%\bin\go.exe"
 REM 
 echo [INFO] Checking prerequisites ...
 REM
-IF NOT DEFINED GIT_BIN echo [ERROR] GIT_BIN env var not set. & goto :pauseExit
 IF NOT DEFINED BUILD_HOST echo [ERROR] BUILD_HOST env var not set. & goto :pauseExit
 IF NOT DEFINED BUILD_USER echo [ERROR] BUILD_USER env var not set. & goto :pauseExit
-REM 
 IF NOT DEFINED TARGET_VER echo [ERROR] TARGET_VER env var not set. & goto :pauseExit
 title Syncthing - Build %TARGET_VER%
 REM 
-IF NOT EXIST %GIT_BIN% echo [ERROR] GIT_BIN not found. & goto :pauseExit
 IF NOT EXIST %GO_BIN% echo [ERROR] GO_BIN not found. & goto :pauseExit
 REM 
 echo [INFO] Performing cleanup ...
@@ -70,14 +64,6 @@ REM FUNCTION BLOCK START
 REM ====================
 :cleanUp
 REM 
-goto :eof
-
-
-:runGit
-echo [INFO] git %*
-%GIT_BIN% %*
-SET RESULT=%ERRORLEVEL%
-IF NOT "%RESULT%" == "0" echo [ERROR] git FAILED with error code #%RESULT%. & goto :pauseExit
 goto :eof
 
 
