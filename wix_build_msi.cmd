@@ -71,7 +71,7 @@ SET PRODUCT_WIX_OBJ="%SCRIPT_PATH%%PRODUCT_NAME%.wixobj"
 REM 
 REM Get "Property_ProductVersion" from WXS script.
 SET MSI_PRODUCT_VERSION=
-for /f delims^=^"^ tokens^=2 %%A in ('type %WIX_INPUT_SCRIPT% 2^>NUL: ^| find /i "Property_ProductVersion ="') do SET MSI_PRODUCT_VERSION=%%A
+for /f delims^=^"^ tokens^=2 %%A in ('type %WIX_INPUT_SCRIPT% 2^>NUL: ^| find /i "Property_ProductVersion =" ^| Syncthing\psreplace "-rc" ""') do SET MSI_PRODUCT_VERSION=%%A
 IF NOT DEFINED MSI_PRODUCT_VERSION echo [ERROR] Could not extract MSI_PRODUCT_VERSION from WXS script. & goto :EOS
 echo [INFO] ProductVersion=[v%MSI_PRODUCT_VERSION%]
 REM 
