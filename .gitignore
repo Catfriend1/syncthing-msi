@@ -24,6 +24,7 @@ wix/
 SourceDir/*
 
 # include tracked files
+# !SourceDir/nssm_x86.exe
 !SourceDir/psreplace.cmd
 !SourceDir/syncthing.ico
 !SourceDir/syncthing_grant_folder_access.cmd
