@@ -11,7 +11,7 @@ SET PRODUCT_NAME=Syncthing
 REM 
 REM Consts: Prerequisites.
 SET NSSM_FILENAME=nssm-2.24-101-g897c7ad.zip
-SET SYNCTHING_VERSION=v1.8.0
+SET SYNCTHING_VERSION=v1.15.1
 SET SYNCTHING_FILENAME=syncthing-windows-amd64-%SYNCTHING_VERSION%.zip
 SET WIX_TOOLSET_FILENAME=wix311-binaries.zip
 REM 
@@ -21,21 +21,21 @@ REM 	NSSM
 echo [INFO] Downloading NSSM ...
 IF NOT EXIST "%SCRIPT_PATH%%NSSM_FILENAME%" call :psDownloadFile "https://nssm.cc/ci/%NSSM_FILENAME%" "%SCRIPT_PATH%%NSSM_FILENAME%"
 call :psExpandArchive "%SCRIPT_PATH%%NSSM_FILENAME%" "%SCRIPT_PATH%"
-copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win32\nssm.exe" "%SCRIPT_PATH%\Syncthing\nssm_x86.exe"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\nssm_x86.exe" echo [ERROR] File not found: nssm_x86.exe & pause & goto :eof
+copy /y "%SCRIPT_PATH%%NSSM_FILENAME:.zip=%\win32\nssm.exe" "%SCRIPT_PATH%\SourceDir\nssm_x86.exe"
+IF NOT EXIST "%SCRIPT_PATH%\SourceDir\nssm_x86.exe" echo [ERROR] File not found: nssm_x86.exe & pause & goto :eof
 REM 
 REM 	Syncthing
 echo [INFO] Downloading Syncthing ...
 IF NOT EXIST "%SCRIPT_PATH%%SYNCTHING_FILENAME%" call :psDownloadFile "https://github.com/syncthing/syncthing/releases/download/%SYNCTHING_VERSION%/%SYNCTHING_FILENAME%" "%SCRIPT_PATH%%SYNCTHING_FILENAME%"
 call :psExpandArchive "%SCRIPT_PATH%%SYNCTHING_FILENAME%" "%SCRIPT_PATH%"
-copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\AUTHORS.txt" "%SCRIPT_PATH%\Syncthing\AUTHORS.txt"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\AUTHORS.txt" echo [ERROR] File not found: AUTHORS.txt & pause & goto :eof
-copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\LICENSE.txt" "%SCRIPT_PATH%\Syncthing\LICENSE.txt"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\LICENSE.txt" echo [ERROR] File not found: LICENSE.txt & pause & goto :eof
-copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\README.txt" "%SCRIPT_PATH%\Syncthing\README.txt"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\README.txt" echo [ERROR] File not found: README.txt & pause & goto :eof
-copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\syncthing.exe" "%SCRIPT_PATH%\Syncthing\syncthing.exe"
-IF NOT EXIST "%SCRIPT_PATH%\Syncthing\syncthing.exe" echo [ERROR] File not found: syncthing.exe & pause & goto :eof
+copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\AUTHORS.txt" "%SCRIPT_PATH%\SourceDir\AUTHORS.txt"
+IF NOT EXIST "%SCRIPT_PATH%\SourceDir\AUTHORS.txt" echo [ERROR] File not found: AUTHORS.txt & pause & goto :eof
+copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\LICENSE.txt" "%SCRIPT_PATH%\SourceDir\LICENSE.txt"
+IF NOT EXIST "%SCRIPT_PATH%\SourceDir\LICENSE.txt" echo [ERROR] File not found: LICENSE.txt & pause & goto :eof
+copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\README.txt" "%SCRIPT_PATH%\SourceDir\README.txt"
+IF NOT EXIST "%SCRIPT_PATH%\SourceDir\README.txt" echo [ERROR] File not found: README.txt & pause & goto :eof
+copy /y "%SCRIPT_PATH%%SYNCTHING_FILENAME:.zip=%\syncthing.exe" "%SCRIPT_PATH%\SourceDir\syncthing.exe"
+IF NOT EXIST "%SCRIPT_PATH%\SourceDir\syncthing.exe" echo [ERROR] File not found: syncthing.exe & pause & goto :eof
 REM 
 REM   WiX Toolset
 echo [INFO] Downloading WiX Toolset ...
@@ -56,7 +56,7 @@ SET WIX_INPUT_SCRIPT_TEMPLATE="%SCRIPT_PATH%%PRODUCT_NAME%.wxs.template"
 SET WIX_INPUT_SCRIPT="%SCRIPT_PATH%%PRODUCT_NAME%.wxs"
 REM 
 REM 		Detect ProductVersion of "syncthing.exe".
-SET SYNCTHING_EXE=%SCRIPT_PATH%Syncthing\syncthing.exe
+SET SYNCTHING_EXE=%SCRIPT_PATH%SourceDir\syncthing.exe
 REM 
 SET SYNCTHING_EXE_PRODUCTVERSION=
 for /f "tokens=*" %%A in ('powershell -ExecutionPolicy "ByPass" "(Get-Item -path \"%SYNCTHING_EXE%\").VersionInfo.ProductVersion"') do SET SYNCTHING_EXE_PRODUCTVERSION=%%A
@@ -64,14 +64,14 @@ IF NOT DEFINED SYNCTHING_EXE_PRODUCTVERSION echo [ERROR] Could not determine Pro
 echo [INFO] SYNCTHING_EXE_PRODUCTVERSION=v[%SYNCTHING_EXE_PRODUCTVERSION%]
 REM 
 REM 		Update WIX_INPUT_SCRIPT with SYNCTHING_EXE_PRODUCTVERSION.
-type %WIX_INPUT_SCRIPT_TEMPLATE% | Syncthing\psreplace "BATCH_PRODUCTVERSION" "%SYNCTHING_EXE_PRODUCTVERSION%" > %WIX_INPUT_SCRIPT%
+type %WIX_INPUT_SCRIPT_TEMPLATE% | SourceDir\psreplace "BATCH_PRODUCTVERSION" "%SYNCTHING_EXE_PRODUCTVERSION%" > %WIX_INPUT_SCRIPT%
 REM 
 REM 	Output files
 SET PRODUCT_WIX_OBJ="%SCRIPT_PATH%%PRODUCT_NAME%.wixobj"
 REM 
 REM Get "Property_ProductVersion" from WXS script.
 SET MSI_PRODUCT_VERSION=
-for /f delims^=^"^ tokens^=2 %%A in ('type %WIX_INPUT_SCRIPT% 2^>NUL: ^| find /i "Property_ProductVersion =" ^| Syncthing\psreplace "-rc" ""') do SET MSI_PRODUCT_VERSION=%%A
+for /f delims^=^"^ tokens^=2 %%A in ('type %WIX_INPUT_SCRIPT% 2^>NUL: ^| find /i "Property_ProductVersion =" ^| SourceDir\psreplace "-rc" ""') do SET MSI_PRODUCT_VERSION=%%A
 IF NOT DEFINED MSI_PRODUCT_VERSION echo [ERROR] Could not extract MSI_PRODUCT_VERSION from WXS script. & goto :EOS
 echo [INFO] ProductVersion=[v%MSI_PRODUCT_VERSION%]
 REM 
