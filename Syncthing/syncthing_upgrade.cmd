@@ -80,7 +80,7 @@ REM 	Remove Default Shared Folder
 call :editConfigXml "(?s)\r\n\s+<folder id=\`default\` .*?<\/folder>" ""
 REM 
 REM 	Default Folder Path
-call :editConfigXml "<defaultFolderPath>~<\/defaultFolderPath>" "<defaultFolderPath>%SystemDrive%\Server\Sync</defaultFolderPath>"
+call :editConfigXml "(.*<folder id=\`\` label=\`.*\` path=)\`~\`" "$1 `%SystemDrive%\Server\Sync`"
 REM 
 REM 	Optional - Add device to config.
 IF NOT "%PROPERTY_ADD_DEVICE_HOST%" == "localhost.localdomain" IF DEFINED PROPERTY_ADD_DEVICE_HOST IF DEFINED PROPERTY_ADD_DEVICE_PORT IF DEFINED PROPERTY_ADD_DEVICE_ID call :addDeviceToConfig "%PROPERTY_ADD_DEVICE_ID%" "%PROPERTY_ADD_DEVICE_HOST%" "tcp4://%PROPERTY_ADD_DEVICE_HOST%:%PROPERTY_ADD_DEVICE_PORT%"
@@ -186,6 +186,7 @@ IF NOT EXIST "%CONFIG_XML%" call :generateKeysAndConfig & SET PROPERTY_OVERRIDE_
 IF NOT EXIST "%CONFIG_XML%" call :logAdd "[ERROR] CONFIG_XML not found. Stop." & goto :eof
 REM 
 SET "CONFIG_XML_BACKUP=%DATE:~-4%-%DATE:~-7,-5%-%DATE:~-10,-8%_%time:~-11,2%-%time:~-8,2%-%time:~-5,2%_config.xml"
+SET "CONFIG_XML_BACKUP=%CONFIG_XML_BACKUP: =0%"
 call :logAdd "[INFO] configureSyncthing: Backup config to [%CONFIG_XML_BACKUP%] ..."
 copy /y %CONFIG_XML% "%SYNCTHING_PATH%\AppData\%CONFIG_XML_BACKUP%"
 SET COPY_RESULT=%ERRORLEVEL%
@@ -281,8 +282,26 @@ REM 	Generate a fresh deviceID, keys and config.
 call :logAdd "[INFO] generateKeysAndConfig: Generating new keys and config ..."
 REM 
 "%SYNCTHING_EXE%" -logflags=0 -generate "%SYNCTHING_PATH%\appdata"
-"%SYNCTHING_EXE%" -device-id -home "%SYNCTHING_PATH%\appdata" > "%SYNCTHING_PATH%\appdata\device_id.txt"
+call :storeLocalDeviceId
 IF "%DEBUG_MODE%" == "1" copy /y "%SYNCTHING_PATH%\appdata\config.xml" "%SYNCTHING_PATH%\generateKeysAndConfig_result.xml" 
+REM 
+goto :eof
+
+
+:storeLocalDeviceId
+REM 
+REM Syntax:
+REM 	call :storeLocalDeviceId
+REM 
+REM Called By:
+REM 	:generateKeysAndConfig
+REM 	:renameLocalDevice
+REM 
+REM Global Variables.
+REM 	[IN] SYNCTHING_EXE
+REM 	[IN] SYNCTHING_PATH
+REM 
+"%SYNCTHING_EXE%" -device-id -home "%SYNCTHING_PATH%\appdata" > "%SYNCTHING_PATH%\appdata\device_id.txt"
 REM 
 goto :eof
 
@@ -371,7 +390,12 @@ REM
 REM Syntax:
 REM 	call :renameLocalDevice
 REM 
+REM Global Variables.
+REM 	[IN] SYNCTHING_EXE
+REM 	[IN] SYNCTHING_PATH
+REM 
 SET LOCAL_DEVICE_ID=
+IF NOT EXIST "%SYNCTHING_PATH%\appdata\device_id.txt" call :storeLocalDeviceId
 FOR /F "tokens=1" %%A IN ('TYPE "%SYNCTHING_PATH%\appdata\device_id.txt" 2^>NUL:') DO SET "LOCAL_DEVICE_ID=%%A"
 IF NOT DEFINED LOCAL_DEVICE_ID call :logAdd "[ERROR] renameLocalDevice: Failed to read LOCAL_DEVICE_ID." & goto :eof
 call :editConfigUpdateDevice "%LOCAL_DEVICE_ID%" "name" "%COMPUTERNAME%"
