@@ -6,11 +6,11 @@ wix*-binaries.zip
 # Prerequisite extract related
 nssm-*/
 syncthing-windows-amd64-v*/
-Syncthing/nssm_x86.exe
-Syncthing/syncthing.exe
-Syncthing/AUTHORS.txt
-Syncthing/LICENSE.txt
-Syncthing/README.txt
+SourceDir/nssm_x86.exe
+SourceDir/syncthing.exe
+SourceDir/AUTHORS.txt
+SourceDir/LICENSE.txt
+SourceDir/README.txt
 wix/
 
 # WIX build process related
@@ -18,3 +18,18 @@ wix/
 *.wixobj
 *.wixpdb
 *.wxs
+*.xlst
+
+# ignore all files
+SourceDir/*
+
+# include tracked files
+!SourceDir/psreplace.cmd
+!SourceDir/syncthing.ico
+!SourceDir/syncthing_grant_folder_access.cmd
+!SourceDir/syncthing_remove.cmd
+!SourceDir/syncthing_service.cmd
+!SourceDir/syncthing_strecheckdbevery_off.cmd
+!SourceDir/syncthing_strecheckdbevery_on.cmd
+!SourceDir/syncthing_upgrade.cmd
+!SourceDir/syncthing_webui.cmd
