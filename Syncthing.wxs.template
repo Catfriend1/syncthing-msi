@@ -60,7 +60,7 @@
 		<DirectoryRef Id="ApplicationProgramsFolder">
 			<Component Id="ApplicationShortcut" Guid="*">
 				<Shortcut Directory="ApplicationProgramsFolder" Id="ApplicationWebUiShortcut" Name="$(var.Property_ProductName) Web UI" Description="$(var.Property_ProductName) Web UI" Target="[ServerSyncthingDir]syncthing_webui.cmd" Icon="ApplicationIcon" Show="minimized">
-					<Icon Id="ApplicationIcon" SourceFile="Syncthing\syncthing.ico" />
+					<Icon Id="ApplicationIcon" SourceFile="SourceDir\syncthing.ico" />
 				</Shortcut>
 				<RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
                 <RegistryKey Root="HKCU" Key="Software\[Manufacturer]\[ProductName]">
@@ -73,19 +73,19 @@
             <Component Id="Registration.xml" Guid="33EC1435-32F7-4CB7-94DB-50E146B44D62" DiskId="1">
                 <CreateFolder/>
                 <RemoveFolder Id="RemoveAppRootDirectory" On="uninstall" />
-                <File Id="SYNCTHING.EXE" Name="syncthing.exe" Source="Syncthing\syncthing.exe" />
-				<File Id="AUTHORS.TXT" Name="AUTHORS.txt" Source="Syncthing\AUTHORS.txt" />
-				<File Id="LICENSE.TXT" Name="LICENSE.txt" Source="Syncthing\LICENSE.txt" />
-				<File Id="README.TXT" Name="README.txt" Source="Syncthing\README.txt" />
-				<File Id="PSREPLACE.CMD" Name="psreplace.cmd" Source="Syncthing\psreplace.cmd" />
-				<File Id="SYNCTHING_GRANT_FOLDER_ACCESS.CMD" Name="syncthing_grant_folder_access.cmd" Source="Syncthing\syncthing_grant_folder_access.cmd" />
-				<File Id="SYNCTHING_REMOVE.CMD" Name="syncthing_remove.cmd" Source="Syncthing\syncthing_remove.cmd" />
-				<File Id="SYNCTHING_SERVICE.CMD" Name="syncthing_service.cmd" Source="Syncthing\syncthing_service.cmd" />
-				<File Id="SYNCTHING_STRECHECKDBEVERY_OFF.CMD" Name="syncthing_strecheckdbevery_off.cmd" Source="Syncthing\syncthing_strecheckdbevery_off.cmd" />
-				<File Id="SYNCTHING_STRECHECKDBEVERY_ON.CMD" Name="syncthing_strecheckdbevery_on.cmd" Source="Syncthing\syncthing_strecheckdbevery_on.cmd" />
-				<File Id="SYNCTHING_UPGRADE.CMD" Name="syncthing_upgrade.cmd" Source="Syncthing\syncthing_upgrade.cmd" />
-				<File Id="SYNCTHING_WEBUI.CMD" Name="syncthing_webui.cmd" Source="Syncthing\syncthing_webui.cmd" />
-                <File Id="NSSM_X86.EXE" Name="nssm_x86.exe" Source="Syncthing\nssm_x86.exe" KeyPath="yes" />
+                <File Id="SYNCTHING.EXE" Name="syncthing.exe" Source="SourceDir\syncthing.exe" />
+				<File Id="AUTHORS.TXT" Name="AUTHORS.txt" Source="SourceDir\AUTHORS.txt" />
+				<File Id="LICENSE.TXT" Name="LICENSE.txt" Source="SourceDir\LICENSE.txt" />
+				<File Id="README.TXT" Name="README.txt" Source="SourceDir\README.txt" />
+				<File Id="PSREPLACE.CMD" Name="psreplace.cmd" Source="SourceDir\psreplace.cmd" />
+				<File Id="SYNCTHING_GRANT_FOLDER_ACCESS.CMD" Name="syncthing_grant_folder_access.cmd" Source="SourceDir\syncthing_grant_folder_access.cmd" />
+				<File Id="SYNCTHING_REMOVE.CMD" Name="syncthing_remove.cmd" Source="SourceDir\syncthing_remove.cmd" />
+				<File Id="SYNCTHING_SERVICE.CMD" Name="syncthing_service.cmd" Source="SourceDir\syncthing_service.cmd" />
+				<File Id="SYNCTHING_STRECHECKDBEVERY_OFF.CMD" Name="syncthing_strecheckdbevery_off.cmd" Source="SourceDir\syncthing_strecheckdbevery_off.cmd" />
+				<File Id="SYNCTHING_STRECHECKDBEVERY_ON.CMD" Name="syncthing_strecheckdbevery_on.cmd" Source="SourceDir\syncthing_strecheckdbevery_on.cmd" />
+				<File Id="SYNCTHING_UPGRADE.CMD" Name="syncthing_upgrade.cmd" Source="SourceDir\syncthing_upgrade.cmd" />
+				<File Id="SYNCTHING_WEBUI.CMD" Name="syncthing_webui.cmd" Source="SourceDir\syncthing_webui.cmd" />
+				<File Id="NSSM_X86.EXE" Name="nssm_x86.exe" Source="SourceDir\nssm_x86.exe" KeyPath="yes" />
                 <ServiceInstall
 					Id="NSSM_X86.EXE"
 					Type="ownProcess"
