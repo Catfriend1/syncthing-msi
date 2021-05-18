@@ -25,12 +25,5 @@ SourceDir/*
 
 # include tracked files
 # !SourceDir/nssm_x86.exe
-!SourceDir/psreplace.cmd
+!SourceDir/*.cmd
 !SourceDir/syncthing.ico
-!SourceDir/syncthing_grant_folder_access.cmd
-!SourceDir/syncthing_remove.cmd
-!SourceDir/syncthing_service.cmd
-!SourceDir/syncthing_strecheckdbevery_off.cmd
-!SourceDir/syncthing_strecheckdbevery_on.cmd
-!SourceDir/syncthing_upgrade.cmd
-!SourceDir/syncthing_webui.cmd
