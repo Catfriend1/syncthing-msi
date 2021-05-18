@@ -86,7 +86,7 @@ REM 	call :downloadPrerequisites
 REM 
 REM Consts: Prerequisites.
 SET NSSM_FILENAME=nssm-2.24-101-g897c7ad.zip
-SET SYNCTHING_VERSION=v1.15.1
+SET SYNCTHING_VERSION=v1.16.1
 SET SYNCTHING_FILENAME=syncthing-windows-amd64-%SYNCTHING_VERSION%.zip
 SET WIX_TOOLSET_FILENAME=wix311-binaries.zip
 REM 
