@@ -20,3 +20,4 @@
 *.ps1 eol=crlf
 *.sites eol=crlf
 *.vbs eol=crlf
+*.wxs.template eol=lf
