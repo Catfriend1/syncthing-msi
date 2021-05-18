@@ -89,6 +89,7 @@ echo ******************************************************
 :runAsViaTaskSchedulerWaitForTaskToEnd
 schtasks /QUERY /TN "Syncthing" /FO list 2>NUL: | find /i "Status:" | findstr /i /c:"Bereit" /c:"Ready" >NUL: || (timeout /nobreak 1 >NUL: & goto :runAsViaTaskSchedulerWaitForTaskToEnd)
 call :logAdd "[INFO] Exec via task scheduler finished."
+schtasks /DELETE /TN "Syncthing" /F
 REM
 goto :eof
 
