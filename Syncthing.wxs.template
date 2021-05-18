@@ -78,6 +78,7 @@
 				<File Id="LICENSE.TXT" Name="LICENSE.txt" Source="SourceDir\LICENSE.txt" />
 				<File Id="README.TXT" Name="README.txt" Source="SourceDir\README.txt" />
 				<File Id="PSREPLACE.CMD" Name="psreplace.cmd" Source="SourceDir\psreplace.cmd" />
+				<File Id="SYNCTHING_CLI.CMD" Name="syncthing_cli.cmd" Source="SourceDir\syncthing_cli.cmd" />
 				<File Id="SYNCTHING_GRANT_FOLDER_ACCESS.CMD" Name="syncthing_grant_folder_access.cmd" Source="SourceDir\syncthing_grant_folder_access.cmd" />
 				<File Id="SYNCTHING_REMOVE.CMD" Name="syncthing_remove.cmd" Source="SourceDir\syncthing_remove.cmd" />
 				<File Id="SYNCTHING_SERVICE.CMD" Name="syncthing_service.cmd" Source="SourceDir\syncthing_service.cmd" />
