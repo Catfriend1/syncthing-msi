@@ -1,0 +1,55 @@
+#
+# Extract existing QPKG.
+# 	Open QPKG with 7-Zip [7zFM.exe]
+# 		Extract "control.tar.gz"
+# 			Extract "control.tar"
+# 				Directory "." contains all files
+# 	Files to ignore:
+# 		built_info
+# 		qinstall.sh
+# 		package_routines
+#
+# === Install build prerequisites via app center ===
+# QDK_2.3.11.zip
+#
+# === Build own QPKG. ===
+APP_NAME="syncthing"
+APP_VERSION="1.18.6"
+APP_AUTHOR="Syncthing Community"
+APP_LICENSE="MPL-2.0"
+#
+cd `getcfg QDK Install_Path -f /etc/config/qpkg.conf`
+# rm -rf "${APP_NAME}"
+qbuild --create-env "${APP_NAME}"
+cd `getcfg QDK Install_Path -f /etc/config/qpkg.conf`/"${APP_NAME}"
+sed -i -e "s/QPKG_NAME=.*/QPKG_NAME=\"${APP_NAME}\"/gI" "qpkg.cfg"
+sed -i -e "s/QPKG_VER=.*/QPKG_VER=\"${APP_VERSION}\"/gI" "qpkg.cfg"
+sed -i -e "s/QPKG_AUTHOR=.*/QPKG_AUTHOR=\"${APP_AUTHOR}\"/gI" "qpkg.cfg"
+sed -i -e "s/#QPKG_LICENSE=.*/QPKG_LICENSE=\"${APP_LICENSE}\"/gI" "qpkg.cfg"
+# 	3 (1+2): support both installation and migration
+sed -i -e "s/#QPKG_VOLUME_SELECT=.*/QPKG_VOLUME_SELECT=\"3\"/gI" "qpkg.cfg"
+#
+# sed -i -e "s/#QNAP_CODE_SIGNING/QNAP_CODE_SIGNING/gI" "qpkg.cfg"
+# sed -i -e "s/QNAP_CODE_SIGNING=.*/QNAP_CODE_SIGNING=\"1\"/gI" "qpkg.cfg"
+#
+# Put files to
+## /share/CACHEDEV1_DATA/.qpkg/QDK/syncthing
+# /icons/syncthing.gif
+# /icons/syncthing_80.gif
+# /icons/syncthing_gray.gif
+# /shared/.metadata/release.sig
+# /shared/AUTHORS.txt
+# /shared/LICENSE.txt
+# /shared/README.txt
+# /shared/syncthing.sig
+# /shared/syncthing.sh
+# /x86_64/syncthing
+#
+# Set permissions.
+chmod +x "x86_64/syncthing"
+#
+# Build QPKG.
+qbuild
+#
+# QPKG will be saved to "/build".
+#
