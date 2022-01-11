@@ -75,13 +75,12 @@ REM
 REM 	Usage Reporting
 call :editConfigXml "<urAccepted>.*<\/urAccepted>" "<urAccepted>%PROPERTY_UR_ACCEPTED%</urAccepted>"
 call :editConfigXml "<urSeen>.*<\/urSeen>" "<urSeen>3</urSeen>"
-REM 
-REM 	Remove Default Shared Folder
-call :editConfigXml "(?s)\r\n\s+<folder id=\`default\` .*?<\/folder>" ""
-REM 
-REM 	Default Folder Path
+REM
+REM 	defaults: folder
 call :editConfigXml "(.*<folder id=\`\` label=\`.*\` path=)\`~\`" "$1 `%SystemDrive%\Server\Sync`"
-REM 
+call :editConfigXml "<hashers>.*<\/hashers>" "<hashers>%PROPERTY_HASHERS%</hashers>"
+call :editConfigXml "<versioning>" "<versioning type=`trashcan`>§r§n        		<param key=`cleanoutDays` val=`90`></param>"
+REM
 REM 	Optional - Add device to config.
 IF NOT "%PROPERTY_ADD_DEVICE_HOST%" == "localhost.localdomain" IF DEFINED PROPERTY_ADD_DEVICE_HOST IF DEFINED PROPERTY_ADD_DEVICE_PORT IF DEFINED PROPERTY_ADD_DEVICE_ID call :addDeviceToConfig "%PROPERTY_ADD_DEVICE_ID%" "%PROPERTY_ADD_DEVICE_HOST%" "tcp4://%PROPERTY_ADD_DEVICE_HOST%:%PROPERTY_ADD_DEVICE_PORT%"
 REM 
@@ -203,7 +202,6 @@ IF "%PROPERTY_OVERRIDE_EXISTING_CONFIG%" == "1" call :logAdd "[INFO] configureSy
 REM 
 REM Perform ongoing config maintenance.
 IF "%PROPERTY_OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME%" == "1" call :renameLocalDevice
-call :editConfigXml "<hashers>.*<\/hashers>" "<hashers>%PROPERTY_HASHERS%</hashers>"
 REM 
 call :psConvertFileFromCRLFtoLF %CONFIG_XML%
 REM 
@@ -281,7 +279,7 @@ REM
 REM 	Generate a fresh deviceID, keys and config.
 call :logAdd "[INFO] generateKeysAndConfig: Generating new keys and config ..."
 REM 
-"%SYNCTHING_EXE%" -logflags=0 -generate "%SYNCTHING_PATH%\appdata"
+"%SYNCTHING_EXE%" generate --no-default-folder --config="%SYNCTHING_PATH%\appdata"
 call :storeLocalDeviceId
 IF "%DEBUG_MODE%" == "1" copy /y "%SYNCTHING_PATH%\appdata\config.xml" "%SYNCTHING_PATH%\generateKeysAndConfig_result.xml" 
 REM 
