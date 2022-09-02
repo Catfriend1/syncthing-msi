@@ -14,7 +14,7 @@
 #
 # === Build own QPKG. ===
 APP_NAME="syncthing"
-APP_VERSION="1.18.6"
+APP_VERSION="1.20.4"
 APP_AUTHOR="Syncthing Community"
 APP_LICENSE="MPL-2.0"
 #
@@ -52,4 +52,5 @@ chmod +x "x86_64/syncthing"
 qbuild
 #
 # QPKG will be saved to "/build".
+## /share/CACHEDEV1_DATA/.qpkg/QDK/syncthing/build/syncthing_1.20.4_x86_64.qpkg
 #

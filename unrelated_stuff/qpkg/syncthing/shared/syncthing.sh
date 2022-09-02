@@ -4,6 +4,7 @@ QPKG_NAME="syncthing"
 QPKG_ROOT=`/sbin/getcfg $QPKG_NAME Install_Path -f ${CONF}`
 DAEMON_BIN=syncthing
 DAEMON=${QPKG_ROOT}/${DAEMON_BIN}
+SYNCTHING_CONFIG=${QPKG_ROOT}/config.xml
 APACHE_ROOT=`/sbin/getcfg SHARE_DEF defWeb -d Qweb -f /etc/config/def_share.info`
 export QNAP_QPKG=$QPKG_NAME
 
@@ -44,6 +45,16 @@ case "$1" in
 	if [ ! -z "${PROXY_SERVER}" ]; then
 		export http_proxy="${PROXY_SERVER}"
 		export https_proxy="${PROXY_SERVER}"
+	fi
+
+	if [ ! -f "${SYNCTHING_CONFIG}" ]; then
+		cat << EOF > "${SYNCTHING_CONFIG}"
+<configuration version="36">
+<gui enabled="true" tls="false" debugging="false">
+	<address>0.0.0.0:8384</address>
+</gui>
+</configuration>
+EOF
 	fi
 
 	# Disable Upgrade before launch
