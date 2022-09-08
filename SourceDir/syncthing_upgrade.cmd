@@ -203,8 +203,6 @@ REM
 REM Perform ongoing config maintenance.
 IF "%PROPERTY_OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME%" == "1" call :renameLocalDevice
 REM 
-call :psConvertFileFromCRLFtoLF %CONFIG_XML%
-REM 
 IF "%QUEUE_SERVICE_RESTART%" == "1" call :logAdd "[INFO] configureSyncthing: Restarting previously running service ..." & call :startService
 REM 
 goto :eof
@@ -313,22 +311,6 @@ SET LOG_DATETIMESTAMP=%DATE:~-4%-%DATE:~-7,-5%-%DATE:~-10,-8%_%time:~-11,2%:%tim
 SET LOG_DATETIMESTAMP=%LOG_DATETIMESTAMP: =0%
 echo %LOG_DATETIMESTAMP%: %LOG_TEXT%
 echo %LOG_DATETIMESTAMP%: %LOG_TEXT% >> "%LOGFILE%"
-goto :eof
-
-
-:psConvertFileFromCRLFtoLF
-REM 
-REM Syntax:
-REM 	call :psConvertFileFromCRLFtoLF [FULLFN]
-REM 
-REM Variables.
-SET TMP_PSCFFCL_FULLFN=%1
-IF DEFINED TMP_PSCFFCL_FULLFN SET TMP_PSCFFCL_FULLFN=%TMP_PSCFFCL_FULLFN:"=%
-REM 
-IF NOT EXIST %TMP_PSCFFCL_FULLFN% call :logAdd "[ERROR] psConvertFileFromCRLFtoLF: TMP_PSCFFCL_FULLFN=[%TMP_PSCFFCL_FULLFN%] does not exist." & goto :eof
-call :logAdd "[INFO] psConvertFileFromCRLFtoLF: Converting [%TMP_PSCFFCL_FULLFN%] ..."
-powershell -NoLogo -NoProfile -ExecutionPolicy ByPass -Command "Set-Content -Path '%TMP_PSCFFCL_FULLFN%' -NoNewLine -Value (Get-Content '%TMP_PSCFFCL_FULLFN%' -Raw).Replace(\"`r`n\",\"`n\")" 2> NUL:
-REM 
 goto :eof
 
 
