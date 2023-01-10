@@ -14,7 +14,7 @@
 #
 # === Build own QPKG. ===
 APP_NAME="syncthing"
-APP_VERSION="1.20.4"
+APP_VERSION="1.23.0"
 APP_AUTHOR="Syncthing Community"
 APP_LICENSE="MPL-2.0"
 #
@@ -41,7 +41,6 @@ sed -i -e "s/#QPKG_VOLUME_SELECT=.*/QPKG_VOLUME_SELECT=\"3\"/gI" "qpkg.cfg"
 # /shared/AUTHORS.txt
 # /shared/LICENSE.txt
 # /shared/README.txt
-# /shared/syncthing.sig
 # /shared/syncthing.sh
 # /x86_64/syncthing
 #
