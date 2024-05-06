@@ -4,25 +4,22 @@ SET SCRIPT_PATH=%~dps0
 cd /d "%SCRIPT_PATH%"
 cls
 REM
-call :psConvertFileRemoveCRLF "managed-bookmarks-src.json" "..\user\managed-bookmarks.json"
+call :psConvertFileRemoveCRLF "managed-bookmarks-src.json" "..\machine\managed-bookmarks.json"
 REM
-type "managed-bookmarks-src.json" | tr -d '\r\n' > "..\user\managed-bookmarks.json"
+type "managed-bookmarks-src.json" | tr -d '\r\n' > "..\machine\managed-bookmarks.json"
 REM
-powershell -ExecutionPolicy "ByPass" -Command "ConvertFrom-Json (Get-Content '..\user\managed-bookmarks.json' -Raw) | Out-Null" | findstr /v "^$" | findstr /r ".*" >NUL: && (echo [ERROR] JSON is INVALID. & pause & goto :eof)
+powershell -ExecutionPolicy "ByPass" -Command "ConvertFrom-Json (Get-Content '..\machine\managed-bookmarks.json' -Raw) | Out-Null" | findstr /v "^$" | findstr /r ".*" >NUL: && (echo [ERROR] JSON is INVALID. & pause & goto :eof)
 echo [INFO] JSON is VALID.
 REM
-REM echo [INFO] Updating GPO: C-Google-Chrome
 REM call :updateGPO C-Google-Chrome HKLM\Software\Policies\Google\Chrome ManagedBookmarks
 REM
-REM echo [INFO] Updating GPO: C-Microsoft-Edge
 REM call :updateGPO C-Microsoft-Edge HKLM\Software\Policies\Microsoft\Edge ManagedFavorites
 REM
-REM echo [INFO] Updating GPO: C-Mozilla-Firefox
 REM call :updateGPO C-Mozilla-Firefox HKLM\Software\Policies\Mozilla\Firefox ManagedBookmarks
 REM
-start /wait "" "..\user\managed-bookmarks.json"
+start /wait "" "..\machine\managed-bookmarks.json"
 REM
-REM del /f "..\user\managed-bookmarks.json" 2>NUL:
+REM del /f "..\machine\managed-bookmarks.json" 2>NUL:
 REM timeout 3
 REM
 pause
@@ -67,7 +64,8 @@ SET "UGPO_NAME=%1"
 SET "UPGO_REGKEY=%2"
 SET "UGPO_REGVALUENAME=%3"
 REM
-powershell -ExecutionPolicy "ByPass" -Command "$buf=Get-Content -Encoding UTF8 '..\user\managed-bookmarks.json'; Set-GPRegistryValue -Name '%UGPO_NAME%' -Key '%UPGO_REGKEY%' -ValueName '%UGPO_REGVALUENAME%' -Type String -Value $buf" | findstr /C:"ComputerVersion" || (echo [ERROR] Set-GPRegistryValue: Access denied. & goto :eof)
+echo [INFO] Updating GPO: %UGPO_NAME%
+powershell -ExecutionPolicy "ByPass" -Command "$buf=Get-Content -Encoding UTF8 '..\machine\managed-bookmarks.json'; Set-GPRegistryValue -Name '%UGPO_NAME%' -Key '%UPGO_REGKEY%' -ValueName '%UGPO_REGVALUENAME%' -Type String -Value $buf" | findstr /C:"ComputerVersion" || (echo [ERROR] Set-GPRegistryValue: Access denied. & goto :eof)
 REM
 REM powershell -ExecutionPolicy "ByPass" -Command "Get-GPRegistryValue -Name '%UGPO_NAME%' -Key '%UPGO_REGKEY%' -ValueName '%UGPO_REGVALUENAME%'
 REM
