@@ -86,6 +86,8 @@ def generate_batch_script(regRoot, entries):
         data_type = type_map.get(entry['Type'], 'REG_SZ')
         if value == '**delvals.':
             line = f'REG DELETE "{regRoot}{key}" /f'
+        elif value == '**del.':
+            continue
         else:
             entry_data = entry['Data']
             line = f'REG ADD "{regRoot}{key}" /v "{value}" /t {data_type} /d "{entry_data}" /f'
