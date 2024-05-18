@@ -22,20 +22,20 @@ function GetVersionFromMSI {
     )
     #
     try {
-        $installer = New-Object -ComObject WindowsInstaller.Installer
-        $database = $installer.GetType().InvokeMember("OpenDatabase", "InvokeMethod", $null, $installer, @($msiPath, 0))
+        $windowsInstaller  = New-Object -ComObject WindowsInstaller.Installer
+        $database = $windowsInstaller.OpenDatabase($msiPackage, 0)
         $query = "SELECT `Value` FROM `Property` WHERE `Property`='ProductVersion'"
-        $view = $database.GetType().InvokeMember("OpenView", "InvokeMethod", $null, $database, ($query))
-        $view.GetType().InvokeMember("Execute", "InvokeMethod", $null, $view, $null) | Out-Null
-        $record = $view.GetType().InvokeMember("Fetch", "InvokeMethod", $null, $view, $null)
-        $version = $record.GetType().InvokeMember("StringData", "GetProperty", $null, $record, 1)
+        $view = $database.OpenView($query)
+        $view.Execute() | Out-Null
+        $record = $view.Fetch()
+        $version = $record.StringData(1)
     } catch {
-        Write-Host "[ERROR] " + $_
+        Write-Host ("[ERROR] " + $_)
     } finally {
         $record = $null
         $view = $null
         $database = $null
-        $installer = $null
+        $windowsInstaller  = $null
         [System.GC]::Collect()
         [System.GC]::WaitForPendingFinalizers()
     }
@@ -55,13 +55,18 @@ $binInstalledExecutable = $ENV:ProgramFiles + "\Duplicati 2\Duplicati.GUI.TrayIc
 # Runtime Variables.
 $installedVersion = GetInstalledVersion -binPath $binInstalledExecutable
 $targetVersion = GetVersionFromMSI -msiPackage $binInstaller
+if ($targetVersion -eq $null) {
+    "[ERROR] Could not get targetVersion from binInstaller=[" + $binInstaller + "]"
+    Exit 99
+}
 #
-if ($productVersion -ge $targetVersion) {
-    "[INFO] App already installed and up2date: " + $installedVersion
+"[INFO] App installedVersion=[" + $installedVersion + "], targetVersion=[" + $targetVersion + "]"
+if ($installedVersion -ge $targetVersion) {
+    "[INFO] App already installed and up2date."
     Exit 0
 }
 #
-"[INFO] Exec INSTALL/UPDATE: " + $installedVersion + " > " + $targetVersion
+"[INFO] Exec INSTALL/UPDATE: " + $installedVersion + " < " + $targetVersion
 "[INFO] Exec installer: " + $binInstallerArg
 $process = Start-Process -Wait -PassThru -FilePath "msiexec.exe" -ArgumentList $binInstallerArg 
 if ($process.ExitCode -ne 0) {
