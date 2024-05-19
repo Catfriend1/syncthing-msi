@@ -148,7 +148,7 @@ IF NOT DEFINED defaultVersioningMode SET defaultVersioningMode=none
 REM
 SET CONFIG_XML_NQ=%CONFIG_XML:"=%
 REM
-powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $versioningNode.type = $ENV:defaultVersioningMode; $xml.Save($ENV:CONFIG_XML_NQ);"
+powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $versioningNode.SetAttribute('type', $ENV:defaultVersioningMode); $xml.Save($ENV:CONFIG_XML_NQ);"
 REM
 IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); if ($paramNode -eq $null) { $versioningNode.AppendChild($xml.CreateElement('param')) }; $xml.Save($ENV:CONFIG_XML_NQ);"
 REM
