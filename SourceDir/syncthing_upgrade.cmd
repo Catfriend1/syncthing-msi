@@ -278,6 +278,8 @@ call :editConfigXml "<startBrowser>true<\/startBrowser>" "<startBrowser>false</s
 REM
 REM 	defaults: folder
 call :editConfigXml "(.*<folder id=\`\` label=\`.*\` path=)\`~\`" "$1 `%SystemDrive%\Server\Sync`"
+REM
+call :setDefaultFolderIgnorePerms
 REM 
 REM Perform ongoing config maintenance.
 call :regQueryToVar "%REG_SYNCTHING%" "setDevicenameToComputername" "REG_SZ" "setDevicenameToComputername"
@@ -448,6 +450,15 @@ for /f "tokens=3* delims= " %%A in ('reg query "%TMP_RQTV_REG_KEY%" /v "%TMP_RQT
 IF NOT DEFINED %TMP_RQTV_REG_ENTRY_ENV_VAR% call :logAdd "[WARN] regQueryToVar: Failed query [%TMP_RQTV_REG_KEY%]:[%TMP_RQTV_REG_ENTRY_NAME%]:[%TMP_RQTV_REG_ENTRY_TYPE%]." & SET "REG_QUERIES_SUCCEEDED=0" &goto :eof
 call :logAdd "[INFO] regQueryToVar: Got %TMP_RQTV_REG_ENTRY_ENV_VAR%=[%%%TMP_RQTV_REG_ENTRY_ENV_VAR%%%]"
 REM 
+goto :eof
+
+
+:setDefaultFolderIgnorePerms
+REM
+SET CONFIG_XML_NQ=%CONFIG_XML:"=%
+REM
+powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $defaultFolderNode = $xml.SelectSingleNode('//configuration/defaults/folder'); $defaultFolderNode.SetAttribute('ignorePerms', 'true'); $xml.Save($ENV:CONFIG_XML_NQ);"
+REM
 goto :eof
 
 
