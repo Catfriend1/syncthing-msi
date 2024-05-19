@@ -148,11 +148,11 @@ IF NOT DEFINED defaultVersioningMode SET defaultVersioningMode=none
 REM
 SET CONFIG_XML_NQ=%CONFIG_XML:"=%
 REM
-powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $versioningNode.SetAttribute('type', $ENV:defaultVersioningMode); $xml.Save($ENV:CONFIG_XML_NQ);"
+powershell -ExecutionPolicy ByPass "$xml = New-Object XML; $xml.PreserveWhitespace = $true; $xml.Load('%CONFIG_XML%'); $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $versioningNode.SetAttribute('type', $ENV:defaultVersioningMode); $xml.Save('%CONFIG_XML%');"
 REM
-IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); if ($paramNode -eq $null) { $versioningNode.AppendChild($xml.CreateElement('param')) | Out-Null }; $xml.Save($ENV:CONFIG_XML_NQ);"
+IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "$xml = New-Object XML; $xml.PreserveWhitespace = $true; $xml.Load('%CONFIG_XML%'); $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); if ($paramNode -eq $null) { $versioningNode.AppendChild($xml.CreateElement('param')) | Out-Null }; $xml.Save('%CONFIG_XML%');"
 REM
-IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); $paramNode.SetAttribute('key', 'cleanoutDays'); $paramNode.SetAttribute('val', '90'); $xml.Save($ENV:CONFIG_XML_NQ);"
+IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "$xml = New-Object XML; $xml.PreserveWhitespace = $true; $xml.Load('%CONFIG_XML%'); $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); $paramNode.SetAttribute('key', 'cleanoutDays'); $paramNode.SetAttribute('val', '90'); $xml.Save('%CONFIG_XML%');"
 REM
 goto :eof
 
@@ -457,7 +457,7 @@ goto :eof
 REM
 SET CONFIG_XML_NQ=%CONFIG_XML:"=%
 REM
-powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $defaultFolderNode = $xml.SelectSingleNode('//configuration/defaults/folder'); $defaultFolderNode.SetAttribute('ignorePerms', 'true'); $xml.Save($ENV:CONFIG_XML_NQ);"
+powershell -ExecutionPolicy ByPass "$xml = New-Object XML; $xml.PreserveWhitespace = $true; $xml.Load('%CONFIG_XML%'); $defaultFolderNode = $xml.SelectSingleNode('//configuration/defaults/folder'); $defaultFolderNode.SetAttribute('ignorePerms', 'true'); $xml.Save('%CONFIG_XML%');"
 REM
 goto :eof
 
