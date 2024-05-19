@@ -125,7 +125,7 @@ call :editConfigXml "<crashReportingEnabled>.*<\/crashReportingEnabled>" "<crash
 REM 
 REM 	Usage Reporting
 IF "%enableTelemetry%" == "0" SET PROPERTY_UR_ACCEPTED=-1
-IF "%enableTelemetry%" == "1" SET PROPERTY_UR_ACCEPTED=1
+IF "%enableTelemetry%" == "1" SET PROPERTY_UR_ACCEPTED=3
 call :editConfigXml "<urAccepted>.*<\/urAccepted>" "<urAccepted>%PROPERTY_UR_ACCEPTED%</urAccepted>"
 call :editConfigXml "<urSeen>.*<\/urSeen>" "<urSeen>3</urSeen>"
 REM
