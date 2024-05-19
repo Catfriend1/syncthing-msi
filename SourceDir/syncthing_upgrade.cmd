@@ -152,7 +152,7 @@ powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; 
 REM
 IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); if ($paramNode -eq $null) { $versioningNode.AppendChild($xml.CreateElement('param')) | Out-Null }; $xml.Save($ENV:CONFIG_XML_NQ);"
 REM
-IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); $paramNode.SetAttribute('key', 'cleanoutdays'); $paramNode.SetAttribute('val', '90'); $xml.Save($ENV:CONFIG_XML_NQ);"
+IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); $paramNode.SetAttribute('key', 'cleanoutDays'); $paramNode.SetAttribute('val', '90'); $xml.Save($ENV:CONFIG_XML_NQ);"
 REM
 goto :eof
 
