@@ -18,109 +18,178 @@ call :logAdd "[INFO]"
 goto :eof
 
 
-:applyFirstTimeConfig
+:applyPolicyUpgrade
 REM 
-REM Syntax:
-REM 	call :applyFirstTimeConfig
-REM 
-REM Called By:
-REM 	:configureSyncthing
-REM 
-REM Global Variables.
-REM 	[IN] CONFIG_XML
-REM 	[IN] PROPERTY_*
-REM 
-REM Auto upgrade
-IF "%PROPERTY_STNOUPGRADE%" == "1" (
-	call :logAdd "[INFO] applyFirstTimeConfig: Disabling auto upgrade ..."
+call :regQueryToVar "%REG_SYNCTHING%" "enableAutoUpgrade" "REG_SZ" "enableAutoUpgrade"
+IF NOT DEFINED enableAutoUpgrade SET enableAutoUpgrade=1
+REM
+IF "%enableAutoUpgrade%" == "0" (
+	call :logAdd "[INFO] applyPolicyUpgrade: Disabling auto upgrade ..."
 	SETX /M "STNOUPGRADE" "1" 2>&1 | find ":"
 	SET OPTION_AUTO_UPGRADE_INTERVAL_H=0
 	SET OPTION_RELEASES_URL=http://localhost/upgrades.syncthing.net/meta.json
 ) ELSE (
-	call :logAdd "[INFO] applyFirstTimeConfig: Enabling auto upgrade ..."
+	call :logAdd "[INFO] applyPolicyUpgrade: Enabling auto upgrade ..."
 	SETX /M "STNOUPGRADE" "" 2>&1 | find ":"
 	SET OPTION_AUTO_UPGRADE_INTERVAL_H=12
 	SET OPTION_RELEASES_URL=https://upgrades.syncthing.net/meta.json
 )
-REM 
-REM Web UI Bind
-SET "PROPERTY_REMOTE_WEB_UI_BIND=127.0.0.1:%PROPERTY_WEB_UI_PORT%"
-IF "%PROPERTY_REMOTE_WEB_UI%" == "1" SET "PROPERTY_REMOTE_WEB_UI_BIND=0.0.0.0:%PROPERTY_WEB_UI_PORT%"
-call :logAdd "[INFO] applyFirstTimeConfig: PROPERTY_REMOTE_WEB_UI_BIND=[%PROPERTY_REMOTE_WEB_UI_BIND%]"
-REM 
-REM Adjust syncthing "config.xml".
-call :logAdd "[INFO] applyFirstTimeConfig: Adjusting [config.xml] ..."
-REM 
-REM 	WebGUI Port, Data Port, Do not start browser
-call :editConfigXml "<address>127\.0\.0\.1:.*<\/address>" "<address>%PROPERTY_REMOTE_WEB_UI_BIND%</address>"
-call :editConfigXml "<address>0\.0\.0\.0:.*<\/address>" "<address>%PROPERTY_REMOTE_WEB_UI_BIND%</address>"
-call :editConfigXml "<listenAddress>default<\/listenAddress>" "<listenAddress>tcp4://:%PROPERTY_DATA_PORT%</listenAddress>"
-call :editConfigXml "<listenAddress>tcp4://.*<\/listenAddress>" "<listenAddress>tcp4://:%PROPERTY_DATA_PORT%</listenAddress>"
-call :addRelayListenerToConfig
-call :editConfigXml "<startBrowser>true<\/startBrowser>" "<startBrowser>false</startBrowser>"
-REM 
-REM 	Global Discovery, Local discovery, Relays, NAT Traversal
-call :editConfigXml "<relaysEnabled>.*<\/relaysEnabled>" "<relaysEnabled>%PROPERTY_RELAYS_ENABLED%</relaysEnabled>"
-call :editConfigXml "<natEnabled>.*<\/natEnabled>" "<natEnabled>%PROPERTY_NAT_ENABLED%</natEnabled>"
-call :editConfigXml "<globalAnnounceEnabled>.*<\/globalAnnounceEnabled>" "<globalAnnounceEnabled>%PROPERTY_GLOBAL_ANNOUNCE_ENABLED%</globalAnnounceEnabled>"
-call :editConfigXml "<localAnnounceEnabled>.*<\/localAnnounceEnabled>" "<localAnnounceEnabled>%PROPERTY_LOCAL_ANNOUNCE_ENABLED%</localAnnounceEnabled>"
-REM 
-REM 	Crash Reporting
-call :editConfigXml "<crashReportingEnabled>.*<\/crashReportingEnabled>" "<crashReportingEnabled>%PROPERTY_CRASH_REPORTING_ENABLED%</crashReportingEnabled>"
-REM 
+REM
 REM 	Upgrade server and automatic upgrades
 call :editConfigXml "<autoUpgradeIntervalH>.*<\/autoUpgradeIntervalH>" "<autoUpgradeIntervalH>%OPTION_AUTO_UPGRADE_INTERVAL_H%</autoUpgradeIntervalH>"
 call :editConfigXml "<releasesURL>.*<\/releasesURL>" "<releasesURL>%OPTION_RELEASES_URL%</releasesURL>"
-REM 
-REM 	Usage Reporting
-call :editConfigXml "<urAccepted>.*<\/urAccepted>" "<urAccepted>%PROPERTY_UR_ACCEPTED%</urAccepted>"
-call :editConfigXml "<urSeen>.*<\/urSeen>" "<urSeen>3</urSeen>"
 REM
-REM 	defaults: folder
-call :editConfigXml "(.*<folder id=\`\` label=\`.*\` path=)\`~\`" "$1 `%SystemDrive%\Server\Sync`"
-call :editConfigXml "<hashers>.*<\/hashers>" "<hashers>%PROPERTY_HASHERS%</hashers>"
-call :editConfigXml "<versioning>" "<versioning type=`trashcan`>§r§n        		<param key=`cleanoutDays` val=`90`></param>"
-REM
-REM 	Optional - Add device to config.
-IF NOT "%PROPERTY_ADD_DEVICE_HOST%" == "localhost.localdomain" IF DEFINED PROPERTY_ADD_DEVICE_HOST IF DEFINED PROPERTY_ADD_DEVICE_PORT IF DEFINED PROPERTY_ADD_DEVICE_ID call :addDeviceToConfig "%PROPERTY_ADD_DEVICE_ID%" "%PROPERTY_ADD_DEVICE_HOST%" "tcp4://%PROPERTY_ADD_DEVICE_HOST%:%PROPERTY_ADD_DEVICE_PORT%"
-REM 
 goto :eof
 
 
-:addDeviceToConfig
+:applyPolicyRemoteWebUi
+REM 
+REM Web UI Bind
+call :regQueryToVar "%REG_SYNCTHING%" "webUiTcpPort" "REG_SZ" "webUiTcpPort"
+IF NOT DEFINED webUiTcpPort SET webUiTcpPort=8384
+call :regQueryToVar "%REG_SYNCTHING%" "enableRemoteWebUi" "REG_SZ" "enableRemoteWebUi"
+IF NOT DEFINED enableRemoteWebUi SET enableRemoteWebUi=0
+REM
+SET "PROPERTY_REMOTE_WEB_UI_BIND=127.0.0.1:%webUiTcpPort%"
+IF "%enableRemoteWebUi%" == "1" SET "PROPERTY_REMOTE_WEB_UI_BIND=0.0.0.0:%webUiTcpPort%"
+call :logAdd "[INFO] applyPolicyRemoteWebUi: PROPERTY_REMOTE_WEB_UI_BIND=[%PROPERTY_REMOTE_WEB_UI_BIND%]"
+call :editConfigXml "<address>127\.0\.0\.1:.*<\/address>" "<address>%PROPERTY_REMOTE_WEB_UI_BIND%</address>"
+call :editConfigXml "<address>0\.0\.0\.0:.*<\/address>" "<address>%PROPERTY_REMOTE_WEB_UI_BIND%</address>"
+REM
+goto :eof
+
+
+:applyPolicyDataTcpPort
+REM
+call :regQueryToVar "%REG_SYNCTHING%" "dataTcpPort" "REG_SZ" "dataTcpPort"
+IF NOT DEFINED dataTcpPort SET dataTcpPort=22000
+call :editConfigXml "<listenAddress>default<\/listenAddress>" "<listenAddress>tcp4://:%dataTcpPort%</listenAddress>"
+call :editConfigXml "<listenAddress>tcp4://.*<\/listenAddress>" "<listenAddress>tcp4://:%dataTcpPort%</listenAddress>"
+REM
+goto :eof
+
+
+:applyPolicyEnableGlobalDiscovery
+REM
+call :regQueryToVar "%REG_SYNCTHING%" "enableGlobalDiscovery" "REG_SZ" "enableGlobalDiscovery"
+IF NOT DEFINED enableGlobalDiscovery SET enableGlobalDiscovery=1
+IF "%enableGlobalDiscovery%" == "0" SET enableGlobalDiscovery=false
+IF "%enableGlobalDiscovery%" == "1" SET enableGlobalDiscovery=true
+call :editConfigXml "<globalAnnounceEnabled>.*<\/globalAnnounceEnabled>" "<globalAnnounceEnabled>%enableGlobalDiscovery%</globalAnnounceEnabled>"
+REM
+goto :eof
+
+
+:applyPolicyEnableLocalDiscovery
+REM
+call :regQueryToVar "%REG_SYNCTHING%" "enableLocalDiscovery" "REG_SZ" "enableLocalDiscovery"
+IF NOT DEFINED enableLocalDiscovery SET enableLocalDiscovery=1
+IF "%enableLocalDiscovery%" == "0" SET enableLocalDiscovery=false
+IF "%enableLocalDiscovery%" == "1" SET enableLocalDiscovery=true
+call :editConfigXml "<localAnnounceEnabled>.*<\/localAnnounceEnabled>" "<localAnnounceEnabled>%enableLocalDiscovery%</localAnnounceEnabled>"
+REM
+goto :eof
+
+
+:applyPolicyEnableNAT
+REM
+call :regQueryToVar "%REG_SYNCTHING%" "enableNAT" "REG_SZ" "enableNAT"
+IF NOT DEFINED enableNAT SET enableNAT=1
+IF "%enableNAT%" == "0" SET enableNAT=false
+IF "%enableNAT%" == "1" SET enableNAT=true
+call :editConfigXml "<natEnabled>.*<\/natEnabled>" "<natEnabled>%enableNAT%</natEnabled>"
+REM
+goto :eof
+
+
+:applyPolicyEnableRelays
+REM
+call :regQueryToVar "%REG_SYNCTHING%" "enableRelays" "REG_SZ" "enableRelays"
+IF NOT DEFINED enableRelays SET enableRelays=1
+IF "%enableRelays%" == "0" SET enableRelays=false
+IF "%enableRelays%" == "1" SET enableRelays=true
+call :editConfigXml "<relaysEnabled>.*<\/relaysEnabled>" "<relaysEnabled>%enableRelays%</relaysEnabled>"
+REM
+goto :eof
+
+
+:applyPolicyEnableTelemetry
+REM
+call :regQueryToVar "%REG_SYNCTHING%" "enableTelemetry" "REG_SZ" "enableTelemetry"
+IF NOT DEFINED enableTelemetry SET enableTelemetry=1
+REM 
+REM 	Crash Reporting
+IF "%enableTelemetry%" == "0" SET PROPERTY_CRASH_REPORTING_ENABLED=false
+IF "%enableTelemetry%" == "1" SET PROPERTY_CRASH_REPORTING_ENABLED=true
+call :editConfigXml "<crashReportingEnabled>.*<\/crashReportingEnabled>" "<crashReportingEnabled>%PROPERTY_CRASH_REPORTING_ENABLED%</crashReportingEnabled>"
+REM 
+REM 	Usage Reporting
+IF "%enableTelemetry%" == "0" SET PROPERTY_UR_ACCEPTED=-1
+IF "%enableTelemetry%" == "1" SET PROPERTY_UR_ACCEPTED=1
+call :editConfigXml "<urAccepted>.*<\/urAccepted>" "<urAccepted>%PROPERTY_UR_ACCEPTED%</urAccepted>"
+call :editConfigXml "<urSeen>.*<\/urSeen>" "<urSeen>3</urSeen>"
+REM
+goto :eof
+
+
+:applyPolicyHashers
+REM
+call :regQueryToVar "%REG_SYNCTHING%" "hashers" "REG_SZ" "hashers"
+IF NOT DEFINED hashers SET hashers=0
+call :editConfigXml "<hashers>.*<\/hashers>" "<hashers>%hashers%</hashers>"
+REM
+goto :eof
+
+
+:applyPolicyDefaultVersioning
+REM
+call :regQueryToVar "%REG_SYNCTHING%" "defaultVersioningMode" "REG_SZ" "defaultVersioningMode"
+IF NOT DEFINED defaultVersioningMode SET defaultVersioningMode=none
+REM
+SET CONFIG_XML_NQ=%CONFIG_XML:"=%
+REM
+powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $versioningNode.type = $ENV:defaultVersioningMode; $xml.Save($ENV:CONFIG_XML_NQ);"
+REM
+IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $versioningNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning'); $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); if ($paramNode -eq $null) { $versioningNode.AppendChild($xml.CreateElement('param')) }; $xml.Save($ENV:CONFIG_XML_NQ);"
+REM
+IF "%defaultVersioningMode%" == "trashcan" powershell -ExecutionPolicy ByPass "[xml]$xml = Get-Content $ENV:CONFIG_XML_NQ; $paramNode = $xml.SelectSingleNode('//configuration/defaults/folder/versioning/param'); $paramNode.SetAttribute('key', 'cleanoutdays'); $paramNode.SetAttribute('val', '90'); $xml.Save($ENV:CONFIG_XML_NQ);"
+REM
+goto :eof
+
+
+:applyAddDevicePolicy
 REM 
 REM Syntax:
-REM 	call :addDeviceToConfig "[SERVER_DEVICE_ID]" "[SERVER_DEVICE_NAME]" "[PROTOCOL://SERVER_DNS:SERVER_TCP_PORT]"
+REM 	call :applyAddDevicePolicy "[SERVER_DEVICE_ID]" "[SERVER_DEVICE_NAME]" "[PROTOCOL://SERVER_DNS:SERVER_TCP_PORT]"
 REM 
 REM Called By:
-REM 	:applyFirstTimeConfig
+REM 	MAIN
 REM 
 REM Global Variables.
 REM 	[IN] CONFIG_XML
 REM 
 REM Variables.
-SET TMP_ADTC_SERVER_DEVICE_ID=%1
-IF DEFINED TMP_ADTC_SERVER_DEVICE_ID SET TMP_ADTC_SERVER_DEVICE_ID=%TMP_ADTC_SERVER_DEVICE_ID:"=%
-IF NOT DEFINED TMP_ADTC_SERVER_DEVICE_ID call :logAdd "[ERROR] addDeviceToConfig: Missing parameter TMP_ADTC_SERVER_DEVICE_ID" & goto :eof
-REM 
-SET TMP_ADTC_SERVER_NAME=%2
-IF DEFINED TMP_ADTC_SERVER_NAME SET TMP_ADTC_SERVER_NAME=%TMP_ADTC_SERVER_NAME:"=%
-IF NOT DEFINED TMP_ADTC_SERVER_NAME call :logAdd "[ERROR] addDeviceToConfig: Missing parameter TMP_ADTC_SERVER_NAME" & goto :eof
-REM 
-SET TMP_ADTC_SERVER_ADDR=%3
-IF DEFINED TMP_ADTC_SERVER_ADDR SET TMP_ADTC_SERVER_ADDR=%TMP_ADTC_SERVER_ADDR:"=%
-IF NOT DEFINED TMP_ADTC_SERVER_ADDR call :logAdd "[ERROR] addDeviceToConfig: Missing parameter TMP_ADTC_SERVER_ADDR" & goto :eof
+call :regQueryToVar "%REG_SYNCTHING%" "addDeviceID" "REG_SZ" "addDeviceID"
+IF NOT DEFINED addDeviceID goto :eof
+call :regQueryToVar "%REG_SYNCTHING%" "addDeviceHost" "REG_SZ" "addDeviceHost"
+IF NOT DEFINED addDeviceHost goto :eof
+call :regQueryToVar "%REG_SYNCTHING%" "addDevicePort" "REG_SZ" "addDevicePort"
+IF NOT DEFINED addDevicePort goto :eof
+REM
+SET TMP_ADTC_SERVER_ADDR=tcp4://%addDeviceHost%:%addDevicePort%
+REM
+call :logAdd "[INFO] applyAddDevicePolicy"
 REM 
 REM Check if device already exists in config.
 SET TMP_ADTC_DEVICE_ALREADY_PRESENT=0
-TYPE %CONFIG_XML% 2>NUL: | findstr /I /R /C:".*<device id=\"%TMP_ADTC_SERVER_DEVICE_ID%\" name=\".*\" .*>.*" 1>NUL: && SET TMP_ADTC_DEVICE_ALREADY_PRESENT=1
+TYPE %CONFIG_XML% 2>NUL: | findstr /I /R /C:".*<device id=\"%addDeviceID%\" name=\".*\" .*>.*" 1>NUL: && SET TMP_ADTC_DEVICE_ALREADY_PRESENT=1
 REM
 REM Add device to config if it does not exist yet.
-IF "%TMP_ADTC_DEVICE_ALREADY_PRESENT%" == "0" call :logAdd "[INFO] addDeviceToConfig: Adding device to config [%TMP_ADTC_SERVER_DEVICE_ID%], [%TMP_ADTC_SERVER_ADDR%] ..." & call :editConfigXml "(.*<gui.*>.*)" "    <device id=`%TMP_ADTC_SERVER_DEVICE_ID%` name=`%TMP_ADTC_SERVER_NAME%` compression=`metadata` introducer=`false` skipIntroductionRemovals=`false` introducedBy=``><address>%TMP_ADTC_SERVER_ADDR%</address></device>§r§n$1" & goto :eof
+IF "%TMP_ADTC_DEVICE_ALREADY_PRESENT%" == "0" call :logAdd "[INFO] applyAddDevicePolicy: Adding device to config [%addDeviceID%], [%TMP_ADTC_SERVER_ADDR%] ..." & call :editConfigXml "(.*<gui.*>.*)" "    <device id=`%addDeviceID%` name=`%addDeviceHost%` compression=`metadata` introducer=`false` skipIntroductionRemovals=`false` introducedBy=``><address>%TMP_ADTC_SERVER_ADDR%</address></device>§r§n$1" & goto :eof
 REM 
 REM Update existing device.
-call :logAdd "[INFO] Device [%TMP_ADTC_SERVER_DEVICE_ID%] already present in [config.xml]."
-call :editConfigUpdateDevice "%TMP_ADTC_SERVER_DEVICE_ID%" "address" "%TMP_ADTC_SERVER_ADDR%"
+call :logAdd "[INFO] Device [%addDeviceID%] already present in [config.xml]."
+call :editConfigUpdateDevice "%addDeviceID%" "address" "%TMP_ADTC_SERVER_ADDR%"
 REM 
 goto :eof
 
@@ -131,7 +200,7 @@ REM Syntax:
 REM 	call :addRelayListenerToConfig
 REM 
 REM Called By:
-REM 	:applyFirstTimeConfig
+REM 	MAIN
 REM 
 REM Global Variables.
 REM 	[IN] CONFIG_XML
@@ -159,7 +228,7 @@ REM 	[IN] SCRIPT_PATH
 REM 	[IN] SYNCTHING_EXE
 REM 
 REM Consts.
-SET "REG_SYNCTHING=HKLM\SOFTWARE\WOW6432Node\The Syncthing Authors\Syncthing"
+SET "REG_SYNCTHING=HKLM\SOFTWARE\Policies\Syncthing"
 REM 
 REM Runtime Variables.
 SET SYNCTHING_PATH=%SCRIPT_PATH%
@@ -168,9 +237,6 @@ REM
 REM Always stop service before a test.
 IF "%DEBUG_MODE%" == "1" net stop "Syncthing" & RD /S /Q "%SYNCTHING_PATH%\AppData"
 IF NOT EXIST "%SYNCTHING_PATH%\AppData" MD "%SYNCTHING_PATH%\AppData"
-REM 
-call :readMsiPkgCfgFromRegistry
-IF "%REG_QUERIES_SUCCEEDED%" == "0" call :logAdd "[ERROR] readMsiPkgCfgFromRegistry FAILED. Stop." & goto :eof
 REM 
 REM Note:
 REM 	Windows Installer STOPS the service prior to starting this script if we install another MSI version as the one that is already installed.
@@ -181,7 +247,7 @@ REM
 call :setupFilePermissions
 REM 
 REM Detect a fresh installation.
-IF NOT EXIST "%CONFIG_XML%" call :generateKeysAndConfig & SET PROPERTY_OVERRIDE_EXISTING_CONFIG=1
+IF NOT EXIST "%CONFIG_XML%" call :generateKeysAndConfig
 IF NOT EXIST "%CONFIG_XML%" call :logAdd "[ERROR] CONFIG_XML not found. Stop." & goto :eof
 REM 
 SET "CONFIG_XML_BACKUP=%DATE:~-4%-%DATE:~-7,-5%-%DATE:~-10,-8%_%time:~-11,2%-%time:~-8,2%-%time:~-5,2%_config.xml"
@@ -190,18 +256,35 @@ call :logAdd "[INFO] configureSyncthing: Backup config to [%CONFIG_XML_BACKUP%] 
 copy /y %CONFIG_XML% "%SYNCTHING_PATH%\AppData\%CONFIG_XML_BACKUP%"
 SET COPY_RESULT=%ERRORLEVEL%
 IF NOT "%COPY_RESULT%" == "0" call :logAdd "[WARN] Backup config FAILED with code %COPY_RESULT%."
-REM 
-REM Detect an empty installation.
-SET USER_FOLDERS_PRESENT=0
-TYPE %CONFIG_XML% 2>NUL: | findstr /I /R /C:".*<folder id=\".*\" label=\".*\" .*>.*" | findstr /V /I /R /C:".*<folder id=\".*\" label=\"Default Folder\" .*>.*" 1>NUL: && SET USER_FOLDERS_PRESENT=1
-REM 
-REM Reset config to defaults if an empty config was identified.
-call :logAdd "[INFO] configureSyncthing: USER_FOLDERS_PRESENT=[%USER_FOLDERS_PRESENT%]"
-IF "%USER_FOLDERS_PRESENT%" == "0" SET PROPERTY_OVERRIDE_EXISTING_CONFIG=1
-IF "%PROPERTY_OVERRIDE_EXISTING_CONFIG%" == "1" call :logAdd "[INFO] configureSyncthing: Enforcing first time config ..." & call :applyFirstTimeConfig
+REM
+call :writeSamplePoliciesToReg
+REM
+call :applyPolicyUpgrade
+call :applyPolicyRemoteWebUi
+call :applyPolicyDataTcpPort
+call :addRelayListenerToConfig
+REM
+call :applyPolicyEnableGlobalDiscovery
+call :applyPolicyEnableLocalDiscovery
+call :applyPolicyEnableNAT
+call :applyPolicyEnableRelays
+REM
+call :applyPolicyEnableTelemetry
+REM
+call :applyPolicyHashers
+call :applyPolicyDefaultVersioning
+REM
+call :editConfigXml "<startBrowser>true<\/startBrowser>" "<startBrowser>false</startBrowser>"
+REM
+REM 	defaults: folder
+call :editConfigXml "(.*<folder id=\`\` label=\`.*\` path=)\`~\`" "$1 `%SystemDrive%\Server\Sync`"
 REM 
 REM Perform ongoing config maintenance.
-IF "%PROPERTY_OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME%" == "1" call :renameLocalDevice
+call :regQueryToVar "%REG_SYNCTHING%" "setDevicenameToComputername" "REG_SZ" "setDevicenameToComputername"
+IF NOT DEFINED setDevicenameToComputername SET setDevicenameToComputername=1
+IF "%setDevicenameToComputername%" == "1" call :renameLocalDevice
+REM
+call :applyAddDevicePolicy
 REM 
 IF "%QUEUE_SERVICE_RESTART%" == "1" call :logAdd "[INFO] configureSyncthing: Restarting previously running service ..." & call :startService
 REM 
@@ -314,57 +397,6 @@ echo %LOG_DATETIMESTAMP%: %LOG_TEXT% >> "%LOGFILE%"
 goto :eof
 
 
-:readMsiPkgCfgFromRegistry
-REM 
-REM Syntax:
-REM 	call :readMsiPkgCfgFromRegistry
-REM 
-REM Called By:
-REM 	configureSyncthing
-REM 
-REM Global Variables.
-REM 	[IN]  REG_SYNCTHING
-REM 	[OUT] PROPERTY_ADD_DEVICE_HOST
-REM 	[OUT] PROPERTY_ADD_DEVICE_ID
-REM 	[OUT] PROPERTY_ADD_DEVICE_PORT
-REM 	[OUT] PROPERTY_CRASH_REPORTING_ENABLED
-REM 	[OUT] PROPERTY_DATA_PORT
-REM 	[OUT] PROPERTY_GLOBAL_ANNOUNCE_ENABLED
-REM 	[OUT] PROPERTY_HASHERS
-REM 	[OUT] PROPERTY_LOCAL_ANNOUNCE_ENABLED
-REM 	[OUT] PROPERTY_NAT_ENABLED
-REM 	[OUT] PROPERTY_OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME
-REM 	[OUT] PROPERTY_OVERRIDE_EXISTING_CONFIG
-REM 	[OUT] PROPERTY_RELAYS_ENABLED
-REM 	[OUT] PROPERTY_REMOTE_WEB_UI
-REM 	[OUT] PROPERTY_STNOUPGRADE
-REM 	[OUT] PROPERTY_UR_ACCEPTED
-REM 	[OUT] PROPERTY_WEB_UI_PORT
-REM 	[OUT] REG_QUERIES_SUCCEEDED
-REM 
-call :logAdd "[INFO] readMsiPkgCfgFromRegistry"
-SET REG_QUERIES_SUCCEEDED=1
-REM 
-call :regQueryToVar "%REG_SYNCTHING%" "ADD_DEVICE_HOST" "REG_SZ" "PROPERTY_ADD_DEVICE_HOST"
-call :regQueryToVar "%REG_SYNCTHING%" "ADD_DEVICE_ID" "REG_SZ" "PROPERTY_ADD_DEVICE_ID"
-call :regQueryToVar "%REG_SYNCTHING%" "ADD_DEVICE_PORT" "REG_SZ" "PROPERTY_ADD_DEVICE_PORT"
-call :regQueryToVar "%REG_SYNCTHING%" "crashReportingEnabled" "REG_SZ" "PROPERTY_CRASH_REPORTING_ENABLED"
-call :regQueryToVar "%REG_SYNCTHING%" "DATA_PORT" "REG_SZ" "PROPERTY_DATA_PORT"
-call :regQueryToVar "%REG_SYNCTHING%" "globalAnnounceEnabled" "REG_SZ" "PROPERTY_GLOBAL_ANNOUNCE_ENABLED"
-call :regQueryToVar "%REG_SYNCTHING%" "hashers" "REG_SZ" "PROPERTY_HASHERS"
-call :regQueryToVar "%REG_SYNCTHING%" "localAnnounceEnabled" "REG_SZ" "PROPERTY_LOCAL_ANNOUNCE_ENABLED"
-call :regQueryToVar "%REG_SYNCTHING%" "natEnabled" "REG_SZ" "PROPERTY_NAT_ENABLED"
-call :regQueryToVar "%REG_SYNCTHING%" "OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME" "REG_SZ" "PROPERTY_OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME"
-call :regQueryToVar "%REG_SYNCTHING%" "OVERRIDE_EXISTING_CONFIG" "REG_SZ" "PROPERTY_OVERRIDE_EXISTING_CONFIG"
-call :regQueryToVar "%REG_SYNCTHING%" "relaysEnabled" "REG_SZ" "PROPERTY_RELAYS_ENABLED"
-call :regQueryToVar "%REG_SYNCTHING%" "REMOTE_WEB_UI" "REG_SZ" "PROPERTY_REMOTE_WEB_UI"
-call :regQueryToVar "%REG_SYNCTHING%" "STNOUPGRADE" "REG_SZ" "PROPERTY_STNOUPGRADE"
-call :regQueryToVar "%REG_SYNCTHING%" "urAccepted" "REG_SZ" "PROPERTY_UR_ACCEPTED"
-call :regQueryToVar "%REG_SYNCTHING%" "WEB_UI_PORT" "REG_SZ" "PROPERTY_WEB_UI_PORT"
-REM 
-goto :eof
-
-
 :renameLocalDevice
 REM 
 REM Syntax:
@@ -391,9 +423,6 @@ REM
 REM Example:
 REM 	call :regQueryToVar "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion" "ProgramFilesDir" "REG_SZ" "TestVar"
 REM 
-REM Called By:
-REM 	readMsiPkgCfgFromRegistry
-REM 
 REM Global Variables.
 REM 	[OUT] [ENV_VAR]
 REM 	[OUT] REG_QUERIES_SUCCEEDED
@@ -416,7 +445,7 @@ for /f "tokens=3* delims= " %%A in ('reg query "%TMP_RQTV_REG_KEY%" /v "%TMP_RQT
 	IF "%%B" == "" SET "%TMP_RQTV_REG_ENTRY_ENV_VAR%=%%A"
 	IF NOT "%%B" == "" SET "%TMP_RQTV_REG_ENTRY_ENV_VAR%=%%A %%B"
 )
-IF NOT DEFINED %TMP_RQTV_REG_ENTRY_ENV_VAR% call :logAdd "[ERROR] regQueryToVar: Failed query [%TMP_RQTV_REG_KEY%]:[%TMP_RQTV_REG_ENTRY_NAME%]:[%TMP_RQTV_REG_ENTRY_TYPE%]." & SET "REG_QUERIES_SUCCEEDED=0" &goto :eof
+IF NOT DEFINED %TMP_RQTV_REG_ENTRY_ENV_VAR% call :logAdd "[WARN] regQueryToVar: Failed query [%TMP_RQTV_REG_KEY%]:[%TMP_RQTV_REG_ENTRY_NAME%]:[%TMP_RQTV_REG_ENTRY_TYPE%]." & SET "REG_QUERIES_SUCCEEDED=0" &goto :eof
 call :logAdd "[INFO] regQueryToVar: Got %TMP_RQTV_REG_ENTRY_ENV_VAR%=[%%%TMP_RQTV_REG_ENTRY_ENV_VAR%%%]"
 REM 
 goto :eof
@@ -509,4 +538,31 @@ REM
 call :logAdd "[INFO] stopService"
 net stop "Syncthing" 2>&1 | find "."
 REM 
+goto :eof
+
+
+:writeSamplePoliciesToReg
+REM
+call :logAdd "[INFO] writeSamplePoliciesToReg"
+REG ADD "%REG_SYNCTHING%\Example" /f
+REM
+REG ADD "%REG_SYNCTHING%\Example" /v "addDeviceHost" /t REG_SZ /d "localhost.localdomain" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "addDeviceID" /t REG_SZ /d "CF6WMOG-F4RHVKW-2FTJONJ-GJ3FZQS-YW5TJVW-VDDT6ZQ-EVJ2WDP-RL4QZQO" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "addDevicePort" /t REG_SZ /d "22000" /f >NUL:
+REM
+REG ADD "%REG_SYNCTHING%\Example" /v "dataTcpPort" /t REG_SZ /d "22000" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "defaultVersioningMode" /t REG_SZ /d "none" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "enableAutoUpgrade" /t REG_SZ /d "1" /f >NUL:
+REM
+REG ADD "%REG_SYNCTHING%\Example" /v "enableGlobalDiscovery" /t REG_SZ /d "1" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "enableLocalDiscovery" /t REG_SZ /d "1" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "enableNAT" /t REG_SZ /d "1" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "enableRelays" /t REG_SZ /d "1" /f >NUL:
+REM
+REG ADD "%REG_SYNCTHING%\Example" /v "enableRemoteWebUi" /t REG_SZ /d "0" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "enableTelemetry" /t REG_SZ /d "1" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "hashers" /t REG_SZ /d "0" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "setDevicenameToComputername" /t REG_SZ /d "1" /f >NUL:
+REG ADD "%REG_SYNCTHING%\Example" /v "webUiTcpPort" /t REG_SZ /d "8384" /f >NUL:
+REM
 goto :eof
