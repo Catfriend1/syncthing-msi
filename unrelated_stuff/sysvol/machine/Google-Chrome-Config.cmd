@@ -42,7 +42,6 @@ REG ADD "HKLM\Software\Policies\Google\Chrome" /v "RemoteAccessHostAllowRelayedC
 REG ADD "HKLM\Software\Policies\Google\Chrome" /v "RemoteAccessHostAllowUiAccessForRemoteAssistance" /t REG_DWORD /d "0" /f
 REG ADD "HKLM\Software\Policies\Google\Chrome" /v "RemoteAccessHostFirewallTraversal" /t REG_DWORD /d "0" /f
 REG ADD "HKLM\Software\Policies\Google\Chrome" /v "SafeBrowsingExtendedReportingEnabled" /t REG_DWORD /d "0" /f
-
 REG ADD "HKLM\Software\Policies\Google\Chrome" /v "SafeBrowsingProtectionLevel" /t REG_DWORD /d "1" /f
 REG ADD "HKLM\Software\Policies\Google\Chrome" /v "SearchSuggestEnabled" /t REG_DWORD /d "0" /f
 REG ADD "HKLM\Software\Policies\Google\Chrome" /v "ShowAppsShortcutInBookmarkBar" /t REG_DWORD /d "0" /f
@@ -55,7 +54,6 @@ REG ADD "HKLM\Software\Policies\Google\Chrome" /v "TranslateEnabled" /t REG_DWOR
 REG ADD "HKLM\Software\Policies\Google\Chrome" /v "UrlKeyedAnonymizedDataCollectionEnabled" /t REG_DWORD /d "0" /f
 REG ADD "HKLM\Software\Policies\Google\Chrome" /v "UserFeedbackAllowed" /t REG_DWORD /d "0" /f
 REG ADD "HKLM\Software\Policies\Google\Chrome" /v "WebRtcUdpPortRange" /t REG_SZ /d "19302-19309" /f
-
 REM
 REG DELETE "HKLM\Software\Policies\Google\Chrome\ExtensionInstallForcelist" /f 2>&1 | find /i "erfolg"
 REG ADD "HKLM\Software\Policies\Google\Chrome\ExtensionInstallForcelist" /v "1" /t REG_SZ /d "cjpalhdlnbpafiamejdnhcphjbkeiagm" /f
