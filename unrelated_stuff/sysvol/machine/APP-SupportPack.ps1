@@ -51,8 +51,8 @@ function GetVersionFromMSI {
 #
 #
 # Consts.
-$binInstaller = Resolve-Path -ErrorAction Stop -Path ($PSScriptRoot + "\..\install\SupportPack\SupportPack_v23.06.23.msi")
-$binInstallerArg = "/i `"$binInstaller`" /qb /norestart REBOOT=ReallySuppress"
+$binInstaller = Resolve-Path -ErrorAction Stop -Path ($PSScriptRoot + "\..\install\SupportPack\SupportPack_v24.05.20.msi")
+$binInstallerArg = "/i `"$binInstaller`" /qb /quiet /norestart REBOOT=ReallySuppress"
 $binInstalledVersionFile = $ENV:ProgramFiles + "\SupportPack\SupportPack.packageversion"
 #
 # Runtime Variables.
