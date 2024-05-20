@@ -36,26 +36,8 @@
 
 		<Property Id='ARPPRODUCTICON' Value='ApplicationIcon' />
 		
-		<!-- App specific properties -->
-		<!-- Leave ADD_DEVICE_HOST at the pre-defined value if you do not need to enroll a new device -->
-		<Property Id='ADD_DEVICE_HOST' Value='localhost.localdomain' />
-		<Property Id='ADD_DEVICE_ID' Value='CF6WMOG-F4RHVKW-2FTJONJ-GJ3FZQS-YW5TJVW-VDDT6ZQ-EVJ2WDP-RL4QZQO' />
-		<Property Id='ADD_DEVICE_PORT' Value='22000' />
-		<Property Id='crashReportingEnabled' Value='false' />
-		<Property Id='DATA_PORT' Value='22000' />
-		<Property Id='globalAnnounceEnabled' Value='true' />
-		<Property Id='hashers' Value='0' />
-		<Property Id='localAnnounceEnabled' Value='true' />
-		<Property Id='natEnabled' Value='true' />
-		<Property Id='OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME' Value='1' />
-		<Property Id='OVERRIDE_EXISTING_CONFIG' Value='0' />
-		<Property Id='relaysEnabled' Value='true' />
-		<Property Id='REMOTE_WEB_UI' Value='0' />
 		<!-- SERVICE_ACCOUNT options: LOCALSERVICE, NETWORKSERVICE, SYSTEM -->
 		<Property Id='SERVICE_ACCOUNT' Value='LOCALSERVICE' />
-		<Property Id='STNOUPGRADE' Value='1' />
-		<Property Id='urAccepted' Value='-1' />
-		<Property Id='WEB_UI_PORT' Value='8384' />
 
 		<DirectoryRef Id="ApplicationProgramsFolder">
 			<Component Id="ApplicationShortcut" Guid="*">
@@ -111,26 +93,6 @@
                 <RegistryKey Root="HKLM" Key="Software\[Manufacturer]\[ProductName]">
                     <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" />
                 </RegistryKey>
-                
-                <!-- App specific properties -->
-                <RegistryKey Root="HKLM" Key="Software\[Manufacturer]\[ProductName]">
-					<RegistryValue Name="ADD_DEVICE_HOST" Value="[ADD_DEVICE_HOST]" Type="string" />
-					<RegistryValue Name="ADD_DEVICE_ID" Value="[ADD_DEVICE_ID]" Type="string" />
-					<RegistryValue Name="ADD_DEVICE_PORT" Value="[ADD_DEVICE_PORT]" Type="string" />
-					<RegistryValue Name="crashReportingEnabled" Value="[crashReportingEnabled]" Type="string" />
-					<RegistryValue Name="DATA_PORT" Value="[DATA_PORT]" Type="string" />
-					<RegistryValue Name="globalAnnounceEnabled" Value="[globalAnnounceEnabled]" Type="string" />
-					<RegistryValue Name="hashers" Value="[hashers]" Type="string" />
-					<RegistryValue Name="localAnnounceEnabled" Value="[localAnnounceEnabled]" Type="string" />
-					<RegistryValue Name="natEnabled" Value="[natEnabled]" Type="string" />
-					<RegistryValue Name="OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME" Value="[OVERRIDE_DEVICE_NAME_WITH_COMPUTERNAME]" Type="string" />
-					<RegistryValue Name="OVERRIDE_EXISTING_CONFIG" Value="[OVERRIDE_EXISTING_CONFIG]" Type="string" />
-					<RegistryValue Name="relaysEnabled" Value="[relaysEnabled]" Type="string" />
-					<RegistryValue Name="REMOTE_WEB_UI" Value="[REMOTE_WEB_UI]" Type="string" />
-					<RegistryValue Name="STNOUPGRADE" Value="[STNOUPGRADE]" Type="string" />
-					<RegistryValue Name="urAccepted" Value="[urAccepted]" Type="string" />
-					<RegistryValue Name="WEB_UI_PORT" Value="[WEB_UI_PORT]" Type="string" />
-                </RegistryKey>
             </Component>
         </DirectoryRef>
         
@@ -153,7 +115,7 @@
         <Media Id="1" Cabinet="simple.cab" EmbedCab="yes" />
         
 		<CustomAction 
-			Id="ExecSyncthingUpgradeCmd" 
+			Id="ExecUpgradeCmd" 
 			Directory='ServerSyncthingDir' 
 			Execute='deferred' 
 			Impersonate='no' 
@@ -161,9 +123,9 @@
 			Return='check'/>
 
 		<CustomAction 
-			Id="ExecSyncthingRemoveCmd" 
+			Id="ExecRemoveCmd" 
 			Directory='ServerSyncthingDir' 
-			Execute='immediate' 
+			Execute='deferred' 
 			Impersonate='no' 
 			ExeCommand='[ServerSyncthingDir]syncthing_remove.cmd' 
 			Return='check'/>
@@ -177,8 +139,8 @@
             </Custom>
             -->
             <RemoveExistingProducts Before="InstallInitialize" />
-            <Custom Action="ExecSyncthingUpgradeCmd" After="WriteRegistryValues">NOT REMOVE</Custom>
-            <Custom Action="ExecSyncthingRemoveCmd" Before="InstallFiles">REMOVE</Custom>
+            <Custom Action="ExecUpgradeCmd" After="WriteRegistryValues">NOT REMOVE</Custom>
+            <Custom Action="ExecRemoveCmd" Before="RemoveFiles">REMOVE</Custom>
             <LaunchConditions After="AppSearch"/>
         </InstallExecuteSequence>
 
