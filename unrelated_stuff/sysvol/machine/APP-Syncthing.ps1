@@ -42,15 +42,43 @@ function GetVersionFromMSI {
     #
     Return $version
 }
+
+
+function setSyncthingPolicy {
+    "[INFO] setSyncthingPolicy"
+    #
+    $regPath = "HKLM:\Software\Policies\Syncthing"
+    New-Item -Path $regPath -Force | Out-Null
+    #
+    $values = @{
+        # "addDeviceHost"                = "localhost.localdomain"
+        # "addDeviceID"                  = "CF6WMOG-F4RHVKW-2FTJONJ-GJ3FZQS-YW5TJVW-VDDT6ZQ-EVJ2WDP-RL4QZQO"
+        # "addDevicePort"                = "22000"
+        "defaultVersioningMode"        = "trashcan"
+        "enableAutoUpgrade"            = "0"
+        "enableGlobalDiscovery"        = "0"
+        "enableLocalDiscovery"         = "0"
+        "enableNAT"                    = "0"
+        "enableRelays"                 = "0"
+        "hashers"                      = "1"
+        "setDevicenameToComputername"  = "1"
+    }
+    #
+    foreach ($name in $values.Keys) {
+        New-ItemProperty -Path $regPath -Name $name -Value $values[$name] -PropertyType String -Force | Out-Null
+    }
+    #
+    Return
+}
 ###################
 # FUNCTIONS END   #
 ###################
 #
 #
 # Consts.
-$binInstaller = Resolve-Path -ErrorAction Stop -Path ($PSScriptRoot + "\..\install\Duplicati\duplicati-2.0.8.1_beta_2024-05-07-x64.msi")
-$binInstallerArg = "/i `"$binInstaller`" /qn /norestart REBOOT=ReallySuppress ADDLOCAL=DuplicatiCore,DuplicatiProgramMenuShortCutFeature REMOVE=DuplicatiDesktopShortCutFeature,DuplicatiStartupShortCutFeature"
-$binInstalledExecutable = $ENV:ProgramFiles + "\Duplicati 2\Duplicati.GUI.TrayIcon.exe"
+$binInstaller = Resolve-Path -ErrorAction Stop -Path ($PSScriptRoot + "\..\install\Syncthing\Syncthing_v1.27.7.msi")
+$binInstallerArg = "/i `"$binInstaller`" /qb /norestart"
+$binInstalledExecutable = $ENV:SystemDrive + "\Server\Syncthing\syncthing.exe"
 #
 # Runtime Variables.
 $installedVersion = GetInstalledVersion -binPath $binInstalledExecutable
@@ -59,6 +87,8 @@ if ($targetVersion -eq $null) {
     "[ERROR] Could not get targetVersion from binInstaller=[" + $binInstaller + "]"
     Exit 99
 }
+#
+setSyncthingPolicy
 #
 "[INFO] App installedVersion=[" + $installedVersion + "], targetVersion=[" + $targetVersion + "]"
 if ($installedVersion -ge $targetVersion) {

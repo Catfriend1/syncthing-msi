@@ -48,9 +48,9 @@ function GetVersionFromMSI {
 #
 #
 # Consts.
-$binInstaller = Resolve-Path -ErrorAction Stop -Path ($PSScriptRoot + "\..\install\Duplicati\duplicati-2.0.8.1_beta_2024-05-07-x64.msi")
-$binInstallerArg = "/i `"$binInstaller`" /qn /norestart REBOOT=ReallySuppress ADDLOCAL=DuplicatiCore,DuplicatiProgramMenuShortCutFeature REMOVE=DuplicatiDesktopShortCutFeature,DuplicatiStartupShortCutFeature"
-$binInstalledExecutable = $ENV:ProgramFiles + "\Duplicati 2\Duplicati.GUI.TrayIcon.exe"
+$binInstaller = Resolve-Path -ErrorAction Stop -Path ($PSScriptRoot + "\..\install\Atom\Atom_v1.60.0.msi")
+$binInstallerArg = "/i `"$binInstaller`" /qb /norestart REBOOT=ReallySuppress"
+$binInstalledExecutable = $ENV:ProgramFiles + "\Atom\atom.exe"
 #
 # Runtime Variables.
 $installedVersion = GetInstalledVersion -binPath $binInstalledExecutable

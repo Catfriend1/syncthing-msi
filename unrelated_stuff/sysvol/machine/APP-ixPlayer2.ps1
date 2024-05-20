@@ -5,11 +5,14 @@ function GetInstalledVersion {
     param (
         [parameter(Mandatory = $true)]
         [string]
-        $binPath
+        $markerFile
     )
     #
-    $productVersion = ""
-    $productVersion = (Get-Item -Path $binInstalledExecutable -ErrorAction SilentlyContinue).VersionInfo.ProductVersion
+    try {
+        $productVersion = Get-Content -ErrorAction Stop -Raw -Path $markerFile
+    } catch {
+        $productVersion = "0"
+    }
     Return $productVersion
 }
 
@@ -48,12 +51,12 @@ function GetVersionFromMSI {
 #
 #
 # Consts.
-$binInstaller = Resolve-Path -ErrorAction Stop -Path ($PSScriptRoot + "\..\install\Duplicati\duplicati-2.0.8.1_beta_2024-05-07-x64.msi")
-$binInstallerArg = "/i `"$binInstaller`" /qn /norestart REBOOT=ReallySuppress ADDLOCAL=DuplicatiCore,DuplicatiProgramMenuShortCutFeature REMOVE=DuplicatiDesktopShortCutFeature,DuplicatiStartupShortCutFeature"
-$binInstalledExecutable = $ENV:ProgramFiles + "\Duplicati 2\Duplicati.GUI.TrayIcon.exe"
+$binInstaller = Resolve-Path -ErrorAction Stop -Path ($PSScriptRoot + "\..\install\ixPlayer2\ixPlayer2_v1.0.0.1.msi")
+$binInstallerArg = "/i `"$binInstaller`" /qb /norestart REBOOT=ReallySuppress"
+$binInstalledVersionFile = ${ENV:ProgramFiles(x86)} + "\ixPlayer2\ixPlayer2.packageversion"
 #
 # Runtime Variables.
-$installedVersion = GetInstalledVersion -binPath $binInstalledExecutable
+$installedVersion = GetInstalledVersion -markerFile $binInstalledVersionFile
 $targetVersion = GetVersionFromMSI -msiPackage $binInstaller
 if ($targetVersion -eq $null) {
     "[ERROR] Could not get targetVersion from binInstaller=[" + $binInstaller + "]"
@@ -75,5 +78,6 @@ if ($process.ExitCode -ne 0) {
 }
 #
 "[INFO] Install SUCCESS"
+$targetVersion | Out-File -Encoding ASCII -NoNewline -FilePath $binInstalledVersionFile
 #
 Exit 0
