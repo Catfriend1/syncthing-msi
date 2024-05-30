@@ -1,0 +1,292 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegion]
+"className"="Region"
+"isRoot"="true"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegion\ConnectionAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidInternetRegionConnectionAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegion\IsIsmDeferalEnabled]
+"stereotype"="DbScalar"
+@="false"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegion\RegionName]
+"stereotype"="DbScalar"
+@="Internet"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegion\UrlWhitelist]
+"stereotype"="DbSequence"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionConnectionAuthorizationDecision]
+"className"="ConnectionAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionConnectionAuthorizationDecision\ConnectPermission]
+"stereotype"="DbScalar"
+@="1"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionConnectionAuthorizationDecision\IcaAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidInternetRegionIcaAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionConnectionAuthorizationDecision\RadeAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidInternetRegionRadeAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionIcaAuthorizationDecision]
+"className"="IcaAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionIcaAuthorizationDecision\FileSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionIcaAuthorizationDecision\IsSsonAllowed]
+"stereotype"="DbScalar"
+@="false"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionIcaAuthorizationDecision\MicrophoneAndWebcamSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionIcaAuthorizationDecision\ParentRegionOid]
+"stereotype"="DbScalar"
+@="oidInternetRegion"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionIcaAuthorizationDecision\PdaSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionIcaAuthorizationDecision\ScannerAndDigitalCameraSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidInternetRegionRadeAuthorizationDecision]
+"className"="RadeAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegion]
+"className"="Region"
+"isRoot"="true"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegion\ConnectionAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidIntranetRegionConnectionAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegion\IsIsmDeferalEnabled]
+"stereotype"="DbScalar"
+@="true"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegion\RegionName]
+"stereotype"="DbScalar"
+@="Intranet"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegion\UrlWhitelist]
+"stereotype"="DbSequence"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionConnectionAuthorizationDecision]
+"className"="ConnectionAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionConnectionAuthorizationDecision\ConnectPermission]
+"stereotype"="DbScalar"
+@="1"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionConnectionAuthorizationDecision\IcaAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidIntranetRegionIcaAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionConnectionAuthorizationDecision\RadeAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidIntranetRegionRadeAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionIcaAuthorizationDecision]
+"className"="IcaAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionIcaAuthorizationDecision\FileSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionIcaAuthorizationDecision\IsSsonAllowed]
+"stereotype"="DbScalar"
+@="false"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionIcaAuthorizationDecision\MicrophoneAndWebcamSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionIcaAuthorizationDecision\ParentRegionOid]
+"stereotype"="DbScalar"
+@="oidIntranetRegion"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionIcaAuthorizationDecision\PdaSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionIcaAuthorizationDecision\ScannerAndDigitalCameraSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidIntranetRegionRadeAuthorizationDecision]
+"className"="RadeAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidPredefinedSecurityPolicySettings]
+"className"="PredefinedSecurityPolicySettings"
+"isRoot"="true"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidPredefinedSecurityPolicySettings\BackwardsCompatibleWithLegacySecurityModel]
+"stereotype"="DbScalar"
+@="true"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidPredefinedSecurityPolicySettings\InstantiatedSecurityPolicyEditable]
+"stereotype"="DbScalar"
+@="true"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidPredefinedSecurityPolicySettings\UserSecurityPolicyEditable]
+"stereotype"="DbScalar"
+@="true"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegion]
+"className"="Region"
+"isRoot"="true"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegion\ConnectionAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidRestrictedSitesRegionConnectionAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegion\IsIsmDeferalEnabled]
+"stereotype"="DbScalar"
+@="true"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegion\RegionName]
+"stereotype"="DbScalar"
+@="Restricted Sites"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegion\UrlWhitelist]
+"stereotype"="DbSequence"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionConnectionAuthorizationDecision]
+"className"="ConnectionAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionConnectionAuthorizationDecision\ConnectPermission]
+"stereotype"="DbScalar"
+@="1"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionConnectionAuthorizationDecision\IcaAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidRestrictedSitesRegionIcaAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionConnectionAuthorizationDecision\RadeAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidRestrictedSitesRegionRadeAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionIcaAuthorizationDecision]
+"className"="IcaAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionIcaAuthorizationDecision\FileSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionIcaAuthorizationDecision\IsSsonAllowed]
+"stereotype"="DbScalar"
+@="false"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionIcaAuthorizationDecision\MicrophoneAndWebcamSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionIcaAuthorizationDecision\ParentRegionOid]
+"stereotype"="DbScalar"
+@="oidRestrictedSitesRegion"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionIcaAuthorizationDecision\PdaSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionIcaAuthorizationDecision\ScannerAndDigitalCameraSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidRestrictedSitesRegionRadeAuthorizationDecision]
+"className"="RadeAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegion]
+"className"="Region"
+"isRoot"="true"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegion\ConnectionAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidTrustedSitesRegionConnectionAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegion\IsIsmDeferalEnabled]
+"stereotype"="DbScalar"
+@="true"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegion\RegionName]
+"stereotype"="DbScalar"
+@="Trusted Sites"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegion\UrlWhitelist]
+"stereotype"="DbSequence"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionConnectionAuthorizationDecision]
+"className"="ConnectionAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionConnectionAuthorizationDecision\ConnectPermission]
+"stereotype"="DbScalar"
+@="1"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionConnectionAuthorizationDecision\IcaAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidTrustedSitesRegionIcaAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionConnectionAuthorizationDecision\RadeAuthorizationDecision]
+"stereotype"="DbReference"
+"oid"="oidTrustedSitesRegionRadeAuthorizationDecision"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionIcaAuthorizationDecision]
+"className"="IcaAuthorizationDecision"
+"stereotype"="DbObject"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionIcaAuthorizationDecision\FileSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionIcaAuthorizationDecision\IsSsonAllowed]
+"stereotype"="DbScalar"
+@="false"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionIcaAuthorizationDecision\MicrophoneAndWebcamSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionIcaAuthorizationDecision\ParentRegionOid]
+"stereotype"="DbScalar"
+@="oidTrustedSitesRegion"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionIcaAuthorizationDecision\PdaSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionIcaAuthorizationDecision\ScannerAndDigitalCameraSecurityPermission]
+"stereotype"="DbScalar"
+@="0"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Policies\Citrix\ICA Client\Client Selective Trust\oidTrustedSitesRegionRadeAuthorizationDecision]
+"className"="RadeAuthorizationDecision"
+"stereotype"="DbObject"
