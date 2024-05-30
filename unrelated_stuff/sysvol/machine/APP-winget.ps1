@@ -9,8 +9,10 @@
 ####### https://www.nuget.org/api/v2/package/Microsoft.UI.Xaml/2.8.6
 #
 # Runtime Variables.
-$installedVersion = [version] (Get-AppxPackage -Name "Microsoft.DesktopAppInstaller" -ErrorAction Stop).Version
-$targetVersion = [version] "1.22.11261.0"
+# $installedVersion = [version] (Get-AppxPackage -Name "Microsoft.DesktopAppInstaller" -ErrorAction Stop).Version
+# $targetVersion = [version] "1.22.11261.0"
+$installedVersion = [version] (Get-ProvisionedAppxPackage -Online -ErrorAction Stop | Where-Object { $_.DisplayName -eq "Microsoft.DesktopAppInstaller" } ).Version
+$targetVersion = [version] "2024.506.2113.0"
 #
 "[INFO] App installedVersion=[" + $installedVersion + "], targetVersion=[" + $targetVersion + "]"
 if ($installedVersion -ge $targetVersion) {
@@ -22,7 +24,7 @@ $installRoot = $PSScriptRoot + "\..\install\winget"
 #
 Add-AppxPackage -Path ($installRoot + "\Microsoft.VCLibs.x64.14.00.Desktop.appx")
 Add-AppxPackage -Path ($installRoot + "\Microsoft.UI.Xaml.2.8.appx")
-Add-AppxPackage -Path ($installRoot + "\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle")
+# Add-AppxPackage -Path ($installRoot + "\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle")
 Add-AppxProvisionedPackage -Online -PackagePath ($installRoot + "\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle") -LicensePath ($installRoot + "\License.xml")
 #
 Exit 0
