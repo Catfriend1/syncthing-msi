@@ -44,11 +44,26 @@ function GetVersionFromMSI {
 }
 
 
+function Reg-Add {
+    param (
+        [parameter(Mandatory = $true)] [string] $Path,
+        [parameter(Mandatory = $true)] [string] $Name,
+        [parameter(Mandatory = $true)] [string] $Value,
+        [parameter(Mandatory = $true)] [Microsoft.Win32.RegistryValueKind] $Type
+    )
+    #
+    $regAddPath = $Path -Replace ":", ""
+    if (-not (Test-Path -Path $Path)) {
+        Invoke-Expression "REG ADD `"$regAddPath`" /f" | Out-Null
+    }
+    Set-ItemProperty -Path $Path -Name $Name -Value $Value -Type $Type -Force
+}
+
+
 function setSyncthingPolicy {
     "[INFO] setSyncthingPolicy"
     #
-    $regPath = "HKLM:\Software\Policies\Syncthing"
-    New-Item -Path $regPath -Force | Out-Null
+    Invoke-Expression "REG ADD `"HKLM\Software\Policies\Syncthing`" /f" | Out-Null
     #
     $values = @{
         # "addDeviceHost"                = "localhost.localdomain"
@@ -65,7 +80,7 @@ function setSyncthingPolicy {
     }
     #
     foreach ($name in $values.Keys) {
-        New-ItemProperty -Path $regPath -Name $name -Value $values[$name] -PropertyType String -Force | Out-Null
+        Reg-Add -Path "HKLM:\Software\Policies\Syncthing" -Name $name -Value $values[$name] -Type String
     }
     #
     Return
