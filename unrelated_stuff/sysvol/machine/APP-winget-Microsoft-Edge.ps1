@@ -1,4 +1,4 @@
-﻿###################
+###################
 # FUNCTIONS START #
 ###################
 function cleanUpOldDomainMsiInstall {
@@ -22,6 +22,15 @@ function cleanUpOldDomainMsiInstall {
 ###################
 # FUNCTIONS END   #
 ###################
+#
+#
+# Check if we have patchday.
+if ((Get-Date).Day -gt 5) {
+	"[INFO] Nothing to do, we don't have patchday today. Stop."
+    Exit 99
+}
+#
+Get-Process -Name "msedge" -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue }
 #
 # Runtime Variables.
 $wingetExe = (Resolve-Path -ErrorAction Stop -Path (${ENV:ProgramFiles} + "\WindowsApps\Microsoft.DesktopAppInstaller_*\winget.exe") | Select -First 1).Path
