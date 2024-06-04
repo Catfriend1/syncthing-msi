@@ -60,13 +60,14 @@ if (-not $shouldMapDrive) {
 	Exit 0
 }
 #
-$activeUNC = (Get-PSDrive -Name $driveLetter -ErrorAction SilentlyContinue).DisplayRoot 
+$activeUNC = (Get-PSDrive -Name $driveLetter -ErrorAction SilentlyContinue).DisplayRoot
 if ($activeUNC -eq $driveUNC) {
     "[INFO] Drive " + $driveLetter + ": already mapped to [" + $driveUNC + "]"
     Exit 0
 }
 #
 "[INFO] Mapping drive " + $driveLetter + ": [" + $driveUNC + "]"
+net use /delete ${driveLetter}:
 Remove-PSDrive -Name $driveLetter -ErrorAction SilentlyContinue
 New-PSDrive -Name $driveLetter -PSProvider FileSystem -Persist -Root $driveUNC | Out-Null
 #
