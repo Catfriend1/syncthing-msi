@@ -1,4 +1,3 @@
-# Funktion zum Überprüfen, ob eine IP-Adresse im angegebenen Bereich liegt
 function Is-IPInRange {
     param (
         [string]$IP,
@@ -22,8 +21,7 @@ function Is-IPInRange {
     return $true
 }
 #
-# IP-Adressen des PCs abrufen
-$ipAddresses = (Get-NetIPAddress -AddressFamily IPv4).IPAddress
+$ipAddresses = (Get-NetIPAddress -AddressFamily IPv4 -AddressState Preferred | Where-Object { $_.IPAddress -ne "127.0.0.1" } ).IPAddress
 #
 # Überprüfen, ob eine der Adressen im Bereich liegt
 $rangeStart = "10.10.10.10"
@@ -39,7 +37,7 @@ foreach ($ip in $ipAddresses) {
     }
 }
 if (-not $ipAddressInRange) {
-    "[INFO] IP address is not in mapping range."
+    "[INFO] IP addresses $ipAddresses are not in mapping range."
 }
 #
 $isAssignedUser = @(
@@ -56,6 +54,7 @@ $driveUNC = "\\SERVER.FQDN\SHARE"
 #
 if (-not $shouldMapDrive) {
 	"[INFO] Disconnecting drive " + $driveLetter + ":"
+    net use /delete ${driveLetter}:
 	Remove-PSDrive -Name $driveLetter -ErrorAction SilentlyContinue
 	Exit 0
 }
